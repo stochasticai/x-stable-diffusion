@@ -1,0 +1,38 @@
+## AITemplate Stable Diffusion Example
+
+### Build Dependencies
+
+Install AITemplate
+
+```
+git clone --recursive https://github.com/facebookincubator/AITemplate
+cd python
+python setup.py bdist_wheel
+pip install dist/*.whl --force-reinstall
+```
+
+Install libraries
+
+```
+pip install -r requirements.txt
+```
+
+Verify the library versions. We have tested transformers 4.22, diffusers 0.3 and torch 1.12.
+
+### Compile AITemplate models
+
+You need to register in HuggingFace hub. Get your access token from [Hugging Face account settings](https://huggingface.co/settings/tokens). Then login using `huggingface-cli login` command.
+
+```
+python3 compile.py
+```
+
+Compiled models are store in `./tmp` folder
+
+### Benchmark
+
+```
+python3 demo.py --benchmark
+```
+
+Check the resulted image: `example_ait.png`

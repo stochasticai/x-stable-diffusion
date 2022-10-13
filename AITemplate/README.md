@@ -36,3 +36,18 @@ python3 demo.py --benchmark
 ```
 
 Check the resulted image: `example_ait.png`
+
+### Deploy as rest-api end-point
+
+```
+docker build -t ait_diffusion .
+docker run -p 5000:5000 -ti --gpus=all ait_diffusion
+```
+
+### Test API
+
+```
+python3 client.py
+```
+
+Check the resulted image: `output_api.png`

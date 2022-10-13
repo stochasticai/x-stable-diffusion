@@ -65,7 +65,7 @@ class StableDiffusionAITPipeline():
 																beta_end=0.012, beta_schedule="scaled_linear",
 																num_train_timesteps=1000)
         self.tokenizer = CLIPTokenizer.from_pretrained("CompVis/stable-diffusion-v1-4",subfolder="tokenizer",use_auth_token=token)
-        workdir = f"./tmp_temp"
+        workdir = f"./tmp"
         self.clip_ait_exe = self.init_ait_module(
             model_name="CLIPTextModel", workdir=workdir
         )

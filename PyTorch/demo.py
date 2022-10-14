@@ -5,6 +5,10 @@ import uuid
 
 
 def get_args():
+    """Configure argparser
+
+    :return: arguments
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("--prompt", default="Super Mario learning to fly in an airport, Painting by Leonardo Da Vinci", help="input prompt")
     parser.add_argument("--img_height", type=int, default=512, help="The height in pixels of the generated image.")
@@ -53,9 +57,5 @@ if __name__ == "__main__":
             saving_path.as_posix(),
             uuid.uuid4()
         ))
-        
-    import numpy as np
-    images_ = [np.array(img) for img in images]
-    print(np.array(images_).shape)
             
     print("[+] Images saved in the following path: {}".format(saving_path.as_posix()))

@@ -4,7 +4,6 @@
 </p>
 
 <br>
-<br>
 
 # Realtime inference for Stable Diffusion
 

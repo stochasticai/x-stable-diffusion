@@ -2,10 +2,11 @@
 
 ### Build Dependencies
 
-Install TensorRT
+Install TensorRT 8.4.2.2.4
 
 ```
-Download TensorRT 8.2 from [Nvidia TensorRT](https://developer.nvidia.com/nvidia-tensorrt-8x-download) and install.
+wget wget https://developer.download.nvidia.com/compute/redist/nvidia-tensorrt/nvidia_tensorrt-8.4.2.4-cp39-none-linux_x86_64.whl
+pip install nvidia_tensorrt-8.4.2.4-cp39-none-linux_x86_64.whl
 ```
 
 Install libraries
@@ -33,3 +34,20 @@ Unet TensorRT model is store in `./unet.engine`
 ```
 python3 demo.py --benchmark
 ```
+
+### Deploy as rest-api end-point
+
+You need provide the HuggingFace token in file `server.py`.
+
+```
+docker build -t tensorrt_diffusion .
+docker run -p 5000:5000 -ti --gpus=all tensorrt_diffusion
+```
+
+### Test API
+
+```
+python3 client.py
+```
+
+Check the resulted image: `output_api.png`

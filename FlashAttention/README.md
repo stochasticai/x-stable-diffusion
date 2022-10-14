@@ -25,3 +25,22 @@ You need to register in HuggingFace hub. Get your access token from [Hugging Fac
 ```
 USE_MEMORY_EFFICIENT_ATTENTION=1 python3 demo.py --benchmark
 ```
+
+### Deploy as rest-api end-point
+
+You need provide the HuggingFace token in file `server.py`.
+
+```
+docker build -t fa_diffusion .
+docker run -p 5000:5000 -ti --gpus=all fa_diffusion
+```
+
+Note: Building Xformers takes about 35 mins - be patient
+
+### Test API
+
+```
+python3 client.py
+```
+
+Check the resulted image: `output_api.png`

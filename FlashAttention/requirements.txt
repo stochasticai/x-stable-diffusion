@@ -1,2 +1,8 @@
 transformers==4.21.2
+diffusers==0.3.0
+#torch==1.12.1+cu116
 scipy
+uvicorn
+pydantic
+fastapi
+huggingface_hub

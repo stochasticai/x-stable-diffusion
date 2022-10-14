@@ -18,6 +18,8 @@ Table of contents:
 - [Deploy](#deployment)
     - [Quickstart](#-quickstart)
     - [Manual](#manual)
+- [Stochastic](#-stochastic)
+    - [Features](#features)
 - [Reference](#reference)
 <!-- /TOC -->
 
@@ -62,6 +64,19 @@ Throughput in sec on 1x40GB gpu - batch size = 1:
 ## Manual deployment
 
 <>
+
+## ✅ Stochastic
+
+Stochastic was founded with a vision to make deep learning optimization and deployment effortless. We make it easy to ship state-of-the-art AI models with production-grade performance.
+
+### Features
+- Auto-optimization of deep learning models
+- Benchmarking of models and hardware on different evaluation metrics
+- Auto-scaling hosted and on-prem accelerated inference for models like BLOOM 176B, Stable Diffusion, GPT-J [Get in touch →](https://stochastic.ai/contact)
+- Support for AWS, GCP, Azure clouds and Kubernetes clusters
+
+## [Get early access ->](https://www.stochastic.ai/)
+
 
 ## Reference
 

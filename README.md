@@ -80,6 +80,7 @@ Stochastic was founded with a vision to make deep learning optimization and depl
 
 ## Reference
 
-- [Diffusers](https://github.com/huggingface/diffusers)
+- [HuggingFace Diffusers](https://github.com/huggingface/diffusers)
 - [AITemplate](https://github.com/facebookincubator/AITemplate)
-- [FlashAttention](https://www.photoroom.com/tech/stable-diffusion-100-percent-faster-with-memory-efficient-attention/)
+- [Make stable diffusion up to 100% faster with Memory Efficient Attention](https://www.photoroom.com/tech/stable-diffusion-100-percent-faster-with-memory-efficient-attention/)
+- [Making stable diffusion 25% faster using TensorRT](https://www.photoroom.com/tech/stable-diffusion-25-percent-faster-and-save-seconds/)

@@ -63,9 +63,9 @@ Running args {'max_seq_length': 64, 'num_inference_steps':50, 'image_size':(512,
 | project           \ bs |      1        |     4         |    8          |    16             |   24              | 
 | :--------------------- | :------------ | :------------ | :------------ | :---------------- | :---------------- |
 | Pytorch           fp16 | 5.77s/10.3GB  | 19.2s/18.5GB  | 36s/26.7GB    |  OOM              |                   |
-| AITemplate        fp16 | 1.42s/4.83GB  | 4.25s/8.5GB   | 7.4s/14.5GB   |  15.7s/25GB       |  23.4s/36GB       |
+| FlashAttention    fp16 | 2.80s/7.5GB   |  9.1s/17GB    | 17.7s/29.5GB  |  OOM              |                   |
 | TensorRT          fp16 | 1.68s/8.1GB   |  OOM          |               |                   |                   |
-| FlashAttention    fp16 | 2.8s/7.5GB    |  9.1s/17GB    | 17.7s/29.5GB  |  OOM              |                   |
+| AITemplate        fp16 | 1.38s/4.83GB  | 4.25s/8.5GB   | 7.4s/14.5GB   |  15.7s/25GB       |  23.4s/36GB       |
 
 > Note: TensorRT is out of memory in the covertion stage which convert Unet model from Onnx to TensorRT.
 

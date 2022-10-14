@@ -13,10 +13,10 @@ Currently this repository includes 4 optimization techiques with more in the pip
 
 <!-- TOC -->
 Table of contents:
-- [Optimizations](#🔥-optimizations)
+- [Optimizations](#-optimizations)
 - [Benchmarks](#benchmark-result)
 - [Deploy](#deployment)
-    - [Quickstart](#🚀-quickstart)
+    - [Quickstart](#-quickstart)
     - [Manual](#manual)
 - [Reference](#reference)
 <!-- /TOC -->

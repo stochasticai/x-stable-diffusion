@@ -75,7 +75,7 @@ Stochastic was founded with a vision to make deep learning optimization and depl
 - Auto-scaling hosted and on-prem accelerated inference for models like BLOOM 176B, Stable Diffusion, GPT-J [Get in touch →](https://stochastic.ai/contact)
 - Support for AWS, GCP, Azure clouds and Kubernetes clusters
 
-## [Get early access ->](https://www.stochastic.ai/)
+### [Get early access ->](https://www.stochastic.ai/)
 
 
 ## Reference

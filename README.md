@@ -1,6 +1,16 @@
-# Stable Diffusion optimization and benchmark - Near realtime Stable Diffusion
+<p align="center">
+  <img src=".github/stochastic_logo_light.svg#gh-light-mode-only" width="600" alt="Stochastic.ai"/>
+  <img src=".github/stochastic_logo_dark.svg#gh-dark-mode-only" width="600" alt="Stochastic.ai"/>
+</p>
 
-Stochastic.ai provides this repository to perform fast inference solutions for Stable Diffusion. This repository includes 4 folders corresponding to 4 optimization techiques:
+<br>
+<br>
+
+# Realtime inference for Stable Diffusion
+
+
+
+Stochastic.ai provides this repository to perform fast, almost realtime inference solutions for Stable Diffusion. This repository includes 4 folders corresponding to 4 optimization techiques:
 
 - AITemplate: [Latest optimization framework of Meta](https://github.com/facebookincubator/AITemplate)
 - TensorRT: [Nvidia TensorRT framework](https://github.com/NVIDIA/TensorRT)

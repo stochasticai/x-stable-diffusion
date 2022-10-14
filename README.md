@@ -5,11 +5,24 @@
 
 <br>
 
-# Realtime inference for Stable Diffusion
+# ⚡️ Realtime inference for Stable Diffusion
 
+Stochastic provides this repository to perform fast, almost realtime inference with `Stable Diffusion`. The goal of this repo is to collect and document as many optimization techniques for Stable Diffusion as possible. 
 
+Currently this repository includes 4 optimization techiques with more in the pipeline. Feel free to open a PR to submit a new optimization technique to the folder.
 
-Stochastic.ai provides this repository to perform fast, almost realtime inference solutions for Stable Diffusion. This repository includes 4 folders corresponding to 4 optimization techiques:
+<!-- TOC -->
+Table of contents:
+- [Optimizations](#🔥-optimizations)
+- [Benchmarks](#benchmark-result)
+- [Deploy](#deployment)
+    - [Quickstart](#🚀-quickstart)
+    - [Manual](#manual)
+- [Reference](#reference)
+<!-- /TOC -->
+
+## 🔥 Optimizations
+---
 
 - AITemplate: [Latest optimization framework of Meta](https://github.com/facebookincubator/AITemplate)
 - TensorRT: [Nvidia TensorRT framework](https://github.com/NVIDIA/TensorRT)
@@ -17,6 +30,7 @@ Stochastic.ai provides this repository to perform fast, almost realtime inferenc
 - Flash Attention: [Flash Attention intergration in Xformers](https://github.com/facebookresearch/xformers)
 
 ## Benchmark result
+---
 
 Here are some benchmark resuls on 1x40 A100, cuda11.6:
 
@@ -43,6 +57,13 @@ Throughput in sec on 1x40GB gpu - batch size = 1:
 | TensorRT          fp16 |               |               |               |                   |                   |
 | Flash Attention   fp16 |               |               |               |                   |                   |
 
+## 🚀 Quickstart
+---
+<>
+
+## Manual deployment
+---
+<>
 
 ## Reference
 

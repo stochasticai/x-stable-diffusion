@@ -22,7 +22,6 @@ Table of contents:
 <!-- /TOC -->
 
 ## 🔥 Optimizations
----
 
 - AITemplate: [Latest optimization framework of Meta](https://github.com/facebookincubator/AITemplate)
 - TensorRT: [Nvidia TensorRT framework](https://github.com/NVIDIA/TensorRT)
@@ -30,7 +29,6 @@ Table of contents:
 - Flash Attention: [Flash Attention intergration in Xformers](https://github.com/facebookresearch/xformers)
 
 ## Benchmark result
----
 
 Here are some benchmark resuls on 1x40 A100, cuda11.6:
 
@@ -58,11 +56,11 @@ Throughput in sec on 1x40GB gpu - batch size = 1:
 | Flash Attention   fp16 |               |               |               |                   |                   |
 
 ## 🚀 Quickstart
----
+
 <>
 
 ## Manual deployment
----
+
 <>
 
 ## Reference

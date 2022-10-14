@@ -59,11 +59,47 @@ Throughput in sec on 1x40GB gpu - batch size = 1:
 
 ## 🚀 Quickstart
 
-<>
+1. Install [Python](https://www.python.org/downloads/) and [Docker](https://docs.docker.com/engine/install/).
+
+2. Install the `stochasticx` library.
+```
+pip install stochasticx
+```
+
+3. Deploy the Stable-Diffusion model
+```
+stochasticx stable-diffusion deploy
+```
+
+4. Do the inference
+```
+stochasticx stable-diffusion infer --prompt "Riding a horse"
+```
+
+5. Check all the options of the `infer` command:
+```
+stochasticx stable-diffusion infer --help
+```
+
+
+You can get the logs of the deployment executing the following command:
+```
+stochasticx stable-diffusion logs
+```
+
+Stop and remove the deployment with this command:
+```
+stochasticx stable-diffusion stop
+```
 
 ## Manual deployment
 
-<>
+Check the `README.md` of the following directories:
+- AITemplate
+- FlashAttention
+- nvFuser
+- PyTorch
+- TensorRT 
 
 ## ✅ Stochastic
 

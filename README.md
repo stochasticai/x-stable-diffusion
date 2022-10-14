@@ -24,9 +24,9 @@ Table of contents:
 ## 🔥 Optimizations
 
 - AITemplate: [Latest optimization framework of Meta](https://github.com/facebookincubator/AITemplate)
-- TensorRT: [Nvidia TensorRT framework](https://github.com/NVIDIA/TensorRT)
-- Nvfuser: [Nvfuser with Pytorch](https://pytorch.org/blog/introducing-nvfuser-a-deep-learning-compiler-for-pytorch/)
-- Flash Attention: [Flash Attention intergration in Xformers](https://github.com/facebookresearch/xformers)
+- TensorRT: [NVIDIA TensorRT framework](https://github.com/NVIDIA/TensorRT)
+- nvFuser: [nvFuser with Pytorch](https://pytorch.org/blog/introducing-nvfuser-a-deep-learning-compiler-for-pytorch/)
+- FlashAttention: [FlashAttention intergration in Xformers](https://github.com/facebookresearch/xformers)
 
 ## Benchmark result
 
@@ -38,22 +38,22 @@ Running args {'max_seq_length': 64, 'num_inference_steps':35, 'image_size':(512,
 ```
 Throughput in sec on 1x40GB gpu - batch size = 1:
 
-| project                | Latency (s) | GPU VRAM  |
-| :--------------------- | :---------- | :------   |
-| Pytorch           fp16 |  5.77       |  10.3     |
-| AITemplate        fp16 |  1.38       |  4.83     |
-| TensorRT          fp16 |  1.68       |  8.1      |
-| Nvfuser           fp16 |  3.15       |  ---      |
-| Flash Attention   fp16 |  2.8        |  ---      |
+| Optimization           | Latency (s) | GPU VRAM  |
+| :--------------------- |:----------- | :------   |
+| PyTorch FP16           | 5.77        |  10.3     |
+| AITemplate FP16        | 1.38        |  4.83     |
+| TensorRT FP16          | 1.68        |  8.1      |
+| nvFuser FP16           | 3.15        |  ---      |
+| FlashAttention FP16    | 2.8         |  ---      |
 
 ## Batched Version
 
-| project           \ bs |      1        |     4         |    8          |    16             |   24              | 
+| Optimization      \ bs |      1        |     4         |    8          |    16             |   24              | 
 | :--------------------- | :------------ | :------------ | :------------ | :---------------- | :---------------- |
-| Pytorch           fp16 | 5.77s/10.3GB  | 19s/18.5GB    | 36s/26.7GB    |                   |                   |
-| AITemplate        fp16 |               |               |               |                   |                   |
-| TensorRT          fp16 |               |               |               |                   |                   |
-| Flash Attention   fp16 |               |               |               |                   |                   |
+| PyTorch FP16           | 5.77s/10.3GB  | 19s/18.5GB    | 36s/26.7GB    |                   |                   |
+| AITemplate FP16        |               |               |               |                   |                   |
+| TensorRT FP16          |               |               |               |                   |                   |
+| FlashAttention FP16    |               |               |               |                   |                   |
 
 ## 🚀 Quickstart
 
@@ -67,4 +67,4 @@ Throughput in sec on 1x40GB gpu - batch size = 1:
 
 - [Diffusers](https://github.com/huggingface/diffusers)
 - [AITemplate](https://github.com/facebookincubator/AITemplate)
-- [Flash Attention](https://www.photoroom.com/tech/stable-diffusion-100-percent-faster-with-memory-efficient-attention/)
+- [FlashAttention](https://www.photoroom.com/tech/stable-diffusion-100-percent-faster-with-memory-efficient-attention/)

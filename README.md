@@ -119,11 +119,17 @@ stochasticx stable-diffusion stop
 
 ## How to get less than 1s latency?
 
-Change the number of steps to 30. 
+Change the `num_inference_steps` to `30`. With this, you can get an image generated in 0.88 seconds. 
 
+```javascript
+{
+  'max_seq_length': 64,
+  'num_inference_steps': 30, 
+  'image_size': (512, 512) 
+}
 ```
-Running args {'max_seq_length': 64, 'num_inference_steps': 30, 'image_size': (512, 512)}
-```
+
+You can also experiment with reducing the `image_size`.
 
 ## Manual deployment
 

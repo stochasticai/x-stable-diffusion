@@ -23,6 +23,7 @@ Table of contents:
   - [Setup](#setup)
   - [Online results](#online-results)
   - [Batched results](#batched-results)
+  - [Sample images generated](#sample-images-generated)
 - [Deploy](#deployment)
     - [Quickstart](#-quickstart)
     - [How to get less than 1s latency?](#how-to-get-less-than-1s-latency)
@@ -78,6 +79,18 @@ The following results were obtained by varying `batch_size` from 1 to 24.
 | AITemplate        fp16 | 1.38s/4.83GB  | 4.25s/8.5GB   | 7.4s/14.5GB   |  15.7s/25GB       |  23.4s/36GB       |
 
 > Note: TensorRT fails to convert UNet model from ONNX to TensorRT due to memory issues.
+
+### Sample images generated
+
+[Click here to view the complete list of generated images](./generated_images/README.md)
+
+| Optimization \ Prompt | Super Mario learning to fly in an airport, Painting by Leonardo Da Vinci | The Easter bunny riding a motorcycle in New York City | Drone flythrough of a tropical jungle convered in snow
+| --- | --- | --- | ---
+| PyTorch           fp16 |  ![pytorch_stable-diffusion_mario](./generated_images/PyTorch/0.png)      |  ![pytorch_stable-diffusion_bunny](./generated_images/PyTorch/1.png)         | ![pytorch_stable-diffusion_bunny](./generated_images/PyTorch/9.png) |
+| nvFuser           fp16 | ![nvFuser_stable-diffusion_mario](./generated_images/nvFuser/0.png)      |  ![nvFuser_stable-diffusion_bunny](./generated_images/nvFuser/1.png)         | ![nvFuser_stable-diffusion_bunny](./generated_images/nvFuser/9.png) |
+| FlashAttention    fp16 |  ![FlashAttention_stable-diffusion_mario](./generated_images/FlashAttention/0.png)      |  ![FlashAttention_stable-diffusion_bunny](./generated_images/FlashAttention/1.png)         | ![FlashAttention_stable-diffusion_bunny](./generated_images/FlashAttention/9.png) |
+| TensorRT          fp16 |  ![TensorRT_stable-diffusion_mario](./generated_images/TensorRT/0.png)      |  ![TensorRT_stable-diffusion_bunny](./generated_images/TensorRT/1.png)         | ![TensorRT_stable-diffusion_bunny](./generated_images/TensorRT/9.png) |
+| AITemplate        fp16 |  ![AITemplate_stable-diffusion_mario](./generated_images/AITemplate/0.png)      |  ![AITemplate_stable-diffusion_bunny](./generated_images/AITemplate/1.png)         | ![AITemplate_stable-diffusion_bunny](./generated_images/AITemplate/9.png) |
 ## 🚀 Quickstart
 
 Make sure you have [Python](https://www.python.org/downloads/) and [Docker](https://docs.docker.com/engine/install/) installed on your system

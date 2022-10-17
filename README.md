@@ -19,9 +19,13 @@ Currently this repository includes 4 optimization techiques with more in the pip
 <!-- TOC -->
 Table of contents:
 - [Optimizations](#-optimizations)
-- [Benchmarks](#benchmark-result)
+- [Benchmarks](#benchmarks)
+  - [Setup](#setup)
+  - [Online results](#online-results)
+  - [Batched results](#batched-results)
 - [Deploy](#deployment)
     - [Quickstart](#-quickstart)
+    - [How to get less than 1s latency?](#how-to-get-less-than-1s-latency)
     - [Manual](#manual)
 - [Stochastic](#-stochastic)
     - [Features](#features)
@@ -35,15 +39,24 @@ Table of contents:
 - nvFuser: [nvFuser with Pytorch](https://pytorch.org/blog/introducing-nvfuser-a-deep-learning-compiler-for-pytorch/)
 - FlashAttention: [FlashAttention intergration in Xformers](https://github.com/facebookresearch/xformers)
 
-## Benchmark result
+## Benchmarks
 
-Here are some benchmark results on 1x40GB A100 gpu, cuda11.6:
+### Setup
 
-All benchmarks are doing by averaging 50 iterations run:
+For hardware, we used 1x40GB A100 GPU with CUDA 11.6 and the results are reported by averaging 50 runs.
+
+The following arguments were used for image generation for all the benchmarks:
+
+```javascript
+{
+  'max_seq_length': 64,
+  'num_inference_steps': 50, 
+  'image_size': (512, 512) 
+}
 ```
-Running args {'max_seq_length': 64, 'num_inference_steps':50, 'image_size':(512,512)}
-```
-Throughput in sec on 1x40GB A100 gpu - batch size = 1:
+
+### Online results
+For `batch_size` 1, these are the latency results:
 
 | project                | Latency (s) | GPU VRAM (GB) |
 | :--------------------- | :---------- | :------------ |
@@ -53,12 +66,9 @@ Throughput in sec on 1x40GB A100 gpu - batch size = 1:
 | TensorRT          fp16 |  1.68       |  8.1          |
 | AITemplate        fp16 |  1.38       |  4.83         |
 
-## Batched Version
+### Batched results
 
-Result on different batch size:
-```
-Running args {'max_seq_length': 64, 'num_inference_steps':50, 'image_size':(512,512)}
-```
+The following results were obtained by varying `batch_size` from 1 to 24.
 
 | project           \ bs |      1        |     4         |    8          |    16             |   24              | 
 | :--------------------- | :------------ | :------------ | :------------ | :---------------- | :---------------- |
@@ -67,8 +77,7 @@ Running args {'max_seq_length': 64, 'num_inference_steps':50, 'image_size':(512,
 | TensorRT          fp16 | 1.68s/8.1GB   |  OOM          |               |                   |                   |
 | AITemplate        fp16 | 1.38s/4.83GB  | 4.25s/8.5GB   | 7.4s/14.5GB   |  15.7s/25GB       |  23.4s/36GB       |
 
-> Note: TensorRT is out of memory in the covertion stage which convert Unet model from Onnx to TensorRT.
-
+> Note: TensorRT fails to convert UNet model from ONNX to TensorRT due to memory issues.
 ## 🚀 Quickstart
 
 Make sure you have [Python](https://www.python.org/downloads/) and [Docker](https://docs.docker.com/engine/install/) installed on your system
@@ -106,6 +115,14 @@ stochasticx stable-diffusion logs
 Stop and remove the deployment with this command:
 ```
 stochasticx stable-diffusion stop
+```
+
+## How to get less than 1s latency?
+
+Change the number of steps to 30. 
+
+```
+Running args {'max_seq_length': 64, 'num_inference_steps': 30, 'image_size': (512, 512)}
 ```
 
 ## Manual deployment

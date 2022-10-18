@@ -1,7 +1,30 @@
 import argparse
+from gettext import npgettext
 from model import load_model, inference
 from pathlib import Path
 import uuid
+from numpy as np
+
+
+def benchmark_model(model, batch_size, warmup=2, repeat=2):
+    times = []
+    
+    for _ in range(warmup):
+        inference(
+            model=model,
+            prompt=["A person riding a horse"] * batch_size,
+            return_time=True
+        )
+    
+    for _ in range(repeat):
+        inference(
+            model=model,
+            prompt=["A person riding a horse"] * batch_size,
+            return_time=True
+        )
+        times.append(time)
+        
+    return np.mean(np.array(times))
 
 
 def get_args():
@@ -19,43 +42,50 @@ def get_args():
     parser.add_argument("--num_images_per_prompt", type=int, default=1, help="The number of images to generate per prompt.")
     parser.add_argument("--seed", type=int, default=None, help="Seed to make generation deterministic")
     parser.add_argument("--saving_path", type=str, default="generated_images", help="Directory where the generated images will be saved")
-    
+    parser.add_argument("--benchmark", action='store_true', help="Runs the benchmarks. You can use --batch_size to specify a spefici batch size")
+    parser.add_argument("--batch_size", type=int, default=1, help="Batch size for benchmarks")
 
     return parser.parse_args()
 
 if __name__ == "__main__":
     args = get_args()
     
-    # Create directory to save images if it does not exist
-    saving_path = Path(args.saving_path)
-    if not saving_path.exists():
-        saving_path.mkdir(exist_ok=True, parents=True)
-    
     print("[+] Loading the model")
     model = load_model()
     print("[+] Model loaded")
     
-    print("[+] Generating images...")
-    # PIL images
-    images, time = inference(
-        model=model,
-        prompt=args.prompt,
-        img_height=args.img_height,
-        img_width=args.img_width,
-        num_inference_steps=args.num_inference_steps,
-        guidance_scale=args.guidance_scale,
-        num_images_per_prompt=args.num_images_per_prompt,
-        seed=args.seed,
-        return_time=True
-    )
     
-    print("[+] Time needed to generate the images: {} seconds".format(time))
-    
-    # Save PIL images with a random name
-    for img in images:
-        img.save('{}/{}.png'.format(
-            saving_path.as_posix(),
-            uuid.uuid4()
-        ))
-            
-    print("[+] Images saved in the following path: {}".format(saving_path.as_posix()))
+    if args.benchmark:
+        print("[+] Start benchmarking. It might take some minutes...")
+        mean_time = benchmark_model(model, args.batch_size)
+        print("[+] Time in seconds to run the experiment: {}".format(mean_time))
+    else:
+        # Create directory to save images if it does not exist
+        saving_path = Path(args.saving_path)
+        if not saving_path.exists():
+            saving_path.mkdir(exist_ok=True, parents=True)
+        
+        print("[+] Generating images...")
+        # PIL images
+        images, time = inference(
+            model=model,
+            prompt=args.prompt,
+            img_height=args.img_height,
+            img_width=args.img_width,
+            num_inference_steps=args.num_inference_steps,
+            guidance_scale=args.guidance_scale,
+            num_images_per_prompt=args.num_images_per_prompt,
+            seed=args.seed,
+            return_time=True
+        )
+        
+        print("[+] Time needed to generate the images: {} seconds".format(time))
+        
+        # Save PIL images with a random name
+        for img in images:
+            img.save('{}/{}.png'.format(
+                saving_path.as_posix(),
+                uuid.uuid4()
+            ))
+                
+        print("[+] Images saved in the following path: {}".format(saving_path.as_posix()))

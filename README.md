@@ -22,12 +22,15 @@ Table of contents:
 - [Benchmarks](#benchmarks)
   - [Setup](#setup)
   - [Online results](#online-results)
+      - [A100 GPU](#a100-gpu)
+      - [T4 GPU](#t4-gpu)
   - [Batched results](#batched-results)
   - [Sample images generated](#sample-images-generated)
 - [Deploy](#deployment)
     - [Quickstart](#-quickstart)
     - [How to get less than 1s latency?](#how-to-get-less-than-1s-latency)
     - [Manual](#manual)
+- [Colab Notebooks](#how-to-run-with-google-colab)
 - [Stochastic](#-stochastic)
     - [Features](#features)
 - [Reference](#reference)
@@ -59,6 +62,8 @@ The following arguments were used for image generation for all the benchmarks:
 ### Online results
 For `batch_size` 1, these are the latency results:
 
+#### A100 GPU
+
 | project                | Latency (s) | GPU VRAM (GB) |
 | :--------------------- | :---------- | :------------ |
 | PyTorch           fp16 |  5.77       |  10.3         |
@@ -67,6 +72,16 @@ For `batch_size` 1, these are the latency results:
 | TensorRT          fp16 |  1.68       |  8.1          |
 | AITemplate        fp16 |  1.38       |  4.83         |
 | ONNX (CUDA)            |  7.26       |  13.3         |
+
+#### T4 GPU
+> Note: AITemplate might not support T4 GPU yet. [Check support here](https://github.com/facebookincubator/AITemplate#installation)
+
+| project                | Latency (s) |
+| :--------------------- | :---------- |
+| PyTorch           fp16 |  28.5       |
+| nvFuser           fp16 |  19.3       |
+| FlashAttention    fp16 |  14.9       |
+| TensorRT          fp16 |  9.3        |
 
 ### Batched results
 
@@ -145,6 +160,12 @@ Change the `num_inference_steps` to `30`. With this, you can get an image genera
 ```
 
 You can also experiment with reducing the `image_size`.
+
+## How to run with Google Colab?
+
+- [Try TensorRT in Colab ->](https://colab.research.google.com/drive/1WQ98YBHTG355vL5wKbmNj9xeBmHRZGJb?usp=sharing)
+
+In each folder, we will provide a Google Colab notebook with which you can test the full flow and inference on a T4 GPU
 
 ## Manual deployment
 

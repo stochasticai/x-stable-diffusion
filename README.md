@@ -73,7 +73,7 @@ For `batch_size` 1, these are the latency results:
 | AITemplate        fp16 |  1.38       |  4.83         |
 
 #### T4 GPU
-Note that `AITemplate` have not supported on T4 GPU yet.
+> Note: AITemplate might not support T4 GPU yet. [Check support here](https://github.com/facebookincubator/AITemplate#installation)
 
 | project                | Latency (s) |
 | :--------------------- | :---------- |
@@ -161,9 +161,9 @@ You can also experiment with reducing the `image_size`.
 
 ## How to run with Google Colab?
 
-- [TensorRT →](https://colab.research.google.com/drive/1WQ98YBHTG355vL5wKbmNj9xeBmHRZGJb?usp=sharing)
+- [Try TensorRT in Colab ->](https://colab.research.google.com/drive/1WQ98YBHTG355vL5wKbmNj9xeBmHRZGJb?usp=sharing)
 
-In each folder, we provide a notebook which run the full flow from model convertion to inference on T4 GPU on Google Colab
+In each folder, we will provide a Google Colab notebook with which you can test the full flow and inference on a T4 GPU
 
 ## Manual deployment
 

@@ -176,8 +176,8 @@ Stochastic was founded with a vision to make deep learning optimization and depl
 
 ## Team and contributors
 
-X-stable-diffusion is a community-driven project with several skillful engineers and researchers contributing to it. 
+x-stable-diffusion is a community-driven project with several skillful engineers and researchers contributing to it. 
 
-It is currently maintained by: [Toan Do](https://github.com/Toan-Do), [Marcos Rivera](https://www.linkedin.com/in/marcosriveramartinez/), [Sarthak Langde](https://www.linkedin.com/in/sarthaklangde/), [Subhash GN](https://www.linkedin.com/in/subhash-g-n-a69700163/), [Riccardo Romagnoli](https://www.linkedin.com/in/riccardo-romagnoli/) and [Roman Ageev](https://www.linkedin.com/in/roman-ageev-950b44235/)
+It is currently maintained by: [Toan Do](https://github.com/Toan-Do), [Marcos Rivera](https://github.com/MarcosRiveraMartinez), [Sarthak Langde](https://github.com/sarthaklangde), [Subhash GN](https://github.com/subhash-stc), [Riccardo Romagnoli](https://github.com/RiccardoRomagnoli) and [Roman Ageev](https://github.com/StochasticRomanAgeev)
 
 

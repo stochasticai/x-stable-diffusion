@@ -36,3 +36,25 @@ model = load_model(
     provider=exeuction_provider
 )
 print("[+] Model loaded")
+
+
+@app.post("/predict/")
+async def predict(input_api: Item) -> Dict:
+    """POST method that received the prompts
+
+    :param input_api: input
+    :return: the images and the time to generate the images
+    """
+    model_input = {
+        **input_api.dict(),
+        **{"return_time": True}
+    }
+    
+    images, time = inference(model=model, **model_input)
+    
+    images = np.array([np.array(img) for img in images]).tolist()
+    
+    return {
+        "images": images,
+        "generation_time_in_secs": time
+    }

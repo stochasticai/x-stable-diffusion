@@ -22,3 +22,40 @@ def get_args():
     
 
     return parser.parse_args()
+
+if __name__ == "__main__":
+    args = get_args()
+    
+    # Create directory to save images if it does not exist
+    saving_path = Path(args.saving_path)
+    if not saving_path.exists():
+        saving_path.mkdir(exist_ok=True, parents=True)
+    
+    print("[+] Loading the model")
+    model = load_model()
+    print("[+] Model loaded")
+    
+    print("[+] Generating images...")
+    # PIL images
+    images, time = inference(
+        model=model,
+        prompt=args.prompt,
+        img_height=args.img_height,
+        img_width=args.img_width,
+        num_inference_steps=args.num_inference_steps,
+        guidance_scale=args.guidance_scale,
+        num_images_per_prompt=args.num_images_per_prompt,
+        seed=args.seed,
+        return_time=True
+    )
+    
+    print("[+] Time needed to generate the images: {} seconds".format(time))
+    
+    # Save PIL images with a random name
+    for img in images:
+        img.save('{}/{}.png'.format(
+            saving_path.as_posix(),
+            uuid.uuid4()
+        ))
+            
+    print("[+] Images saved in the following path: {}".format(saving_path.as_posix()))

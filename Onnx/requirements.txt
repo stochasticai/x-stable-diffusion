@@ -1,0 +1,6 @@
+transformers==4.21.2
+diffusers==0.3.0
+torch==1.12.1+cu116
+fastapi==0.85.0
+uvicorn[standard]==0.18.3
+onnxruntime-gpu==1.12.1

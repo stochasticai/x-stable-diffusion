@@ -3,10 +3,18 @@ from gettext import npgettext
 from model import load_model, inference
 from pathlib import Path
 import uuid
-from numpy as np
+import numpy as np
 
 
 def benchmark_model(model, batch_size, warmup=2, repeat=2):
+    """Benchmark the given model
+
+    :param model: model
+    :param batch_size: the batch size
+    :param warmup: warmup steps before start measuring the times, defaults to 2
+    :param repeat: number of times the benchmark is repeated. The final result is the average, defaults to 2
+    :return: _description_
+    """
     times = []
     
     for _ in range(warmup):
@@ -17,7 +25,7 @@ def benchmark_model(model, batch_size, warmup=2, repeat=2):
         )
     
     for _ in range(repeat):
-        inference(
+        _, time = inference(
             model=model,
             prompt=["A person riding a horse"] * batch_size,
             return_time=True

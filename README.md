@@ -66,6 +66,7 @@ For `batch_size` 1, these are the latency results:
 | FlashAttention    fp16 |  2.80       |  7.5          |
 | TensorRT          fp16 |  1.68       |  8.1          |
 | AITemplate        fp16 |  1.38       |  4.83         |
+| ONNX (CUDA)            |  7.26       |  13.3         |
 
 ### Batched results
 
@@ -77,6 +78,7 @@ The following results were obtained by varying `batch_size` from 1 to 24.
 | FlashAttention    fp16 | 2.80s/7.5GB   |  9.1s/17GB    | 17.7s/29.5GB  |  OOM              |                   |
 | TensorRT          fp16 | 1.68s/8.1GB   |  OOM          |               |                   |                   |
 | AITemplate        fp16 | 1.38s/4.83GB  | 4.25s/8.5GB   | 7.4s/14.5GB   |  15.7s/25GB       |  23.4s/36GB       |
+| ONNX (CUDA)            | 7.26s/13.3GB  | OOM           | OOM           |  OOM              |  OOM              |
 
 > Note: TensorRT fails to convert UNet model from ONNX to TensorRT due to memory issues.
 

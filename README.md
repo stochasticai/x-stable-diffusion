@@ -144,6 +144,27 @@ Change the `num_inference_steps` to `30`. With this, you can get an image genera
 
 You can also experiment with reducing the `image_size`.
 
+## How to run with Google Colab?
+
+We provide a notebook which run TensorRT experiments on Google Colab T4 GPU. Checkout in the `TensorRT/StableDiffusion_TensorRT_Colab.ipynb`. Below is the latency each techniques on T4 GPU. Note that `AITemplate` did not support on T4 GPU.
+
+The following arguments were used for image generation for all the benchmarks:
+
+```javascript
+{
+  'max_seq_length': 64,
+  'num_inference_steps': 50, 
+  'image_size': (512, 512),
+  'batch_size': 1
+}
+```
+| project                | Latency (s) |
+| :--------------------- | :---------- |
+| PyTorch           fp16 |  28.5       |
+| nvFuser           fp16 |  19.3       |
+| FlashAttention    fp16 |  14.9       |
+| TensorRT          fp16 |  9.3        |
+
 ## Manual deployment
 
 Check the `README.md` of the following directories:

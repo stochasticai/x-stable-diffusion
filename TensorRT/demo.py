@@ -87,9 +87,9 @@ class TrtDiffusionModel():
                 # compute the previous noisy sample x_t -> x_t-1
                 latents = self.scheduler.step(noise_pred.cuda(), i, latents)["prev_sample"]
 
-        # scale and decode the image latents with vae
-        latents = 1 / 0.18215 * latents
-        image = self.vae.decode(latents).sample
+            # scale and decode the image latents with vae
+            latents = 1 / 0.18215 * latents
+            image = self.vae.decode(latents).sample
         return image
 
 if __name__ == "__main__":

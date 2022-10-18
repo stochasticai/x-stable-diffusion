@@ -7,8 +7,8 @@ from time import time
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--onnx_unet_path", default='./models/unet/unet.onnx', type=str, help="Onnx unet model path")
-    parser.add_argument("--save_path", default='unet.engine', type=str, help="TensorRT saved path", required=True)
+    parser.add_argument("--onnx_unet_path", default='./models/unet/1/unet.onnx', type=str, help="Onnx unet model path")
+    parser.add_argument("--save_path", default='unet.engine', type=str, help="TensorRT saved path")
     parser.add_argument("--batch_size", default=1, type=int, help="batch size")
     parser.add_argument("--img_size", default=(512,512),help="Unet input image size (h,w)")
     parser.add_argument("--max_seq_length", default=64,help="Maximum sequence length of input text")
@@ -25,25 +25,20 @@ def convert(args):
         print(onnx_parser.get_error(idx))
     if not parse_success:
         sys.exit('ONNX model parsing failed')
+    config = TRT_BUILDER.create_builder_config()
+    profile = TRT_BUILDER.create_optimization_profile() 
 
     latents_shape = (args.batch_size*2, 4, args.img_size[0] // 8, args.img_size[1] // 8)
-    min_latents_shape = (1, 4, args.img_size[0] // 8, args.img_size[1] // 8)
     embed_shape = (args.batch_size*2, args.max_seq_length, 768)
-    min_embed_shape = (1, args.max_seq_length, 768)
-    timestep_shape = (args.batch_size*2,)
-    min_timestep_shape = (1,)
+    timestep_shape = (args.batch_size,)
 
-    config = TRT_BUILDER.create_builder_config()
-    if args.batch_size != 1:
-        config.max_workspace_size = 2 << 40
-        TRT_BUILDER.max_batch_size = args.batch_size*2
     
-    profile = TRT_BUILDER.create_optimization_profile() 
-    profile.set_shape("sample", min_latents_shape, latents_shape, latents_shape) 
-    profile.set_shape("encoder_hidden_states", min_embed_shape, embed_shape, embed_shape) 
-    profile.set_shape("timestep", min_timestep_shape, timestep_shape, timestep_shape) 
+    profile.set_shape("sample", latents_shape, latents_shape, latents_shape) 
+    profile.set_shape("encoder_hidden_states", embed_shape, embed_shape, embed_shape) 
+    profile.set_shape("timestep", timestep_shape, timestep_shape, timestep_shape) 
     config.add_optimization_profile(profile)
 
+    #config.max_workspace_size = 4096 * (1 << 20)
     config.set_flag(trt.BuilderFlag.FP16)
     serialized_engine = TRT_BUILDER.build_serialized_network(network, config)
             
@@ -54,7 +49,4 @@ def convert(args):
 
 if __name__ == "__main__":
     args = get_args()
-    assert args.batch_size <=2, "Can not fit higher batch size than 2 when converting the model"
-    assert args.max_seq_length <= 77, "Maximum sequence length is 64"
-
     convert(args)

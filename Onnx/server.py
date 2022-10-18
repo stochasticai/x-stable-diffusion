@@ -17,3 +17,22 @@ class Item(BaseModel):
     guidance_scale: float = 7.5
     num_images_per_prompt: int = 1
     seed: int = None
+    
+
+exeuction_provider = os.getenv("ONNX_EXECUTION_PROVIDER")
+
+if exeuction_provider is None and torch.cuda.is_available():
+    print("[+] Moving the model to the GPU")
+    exeuction_provider="CUDAExecutionProvider"
+elif exeuction_provider is None:
+    print("[+] Your model will be executed in CPU. The execution might be very slow.")
+    exeuction_provider="CPUExecutionProvider"
+    
+
+app = FastAPI()
+print("[+] Loading model")
+model = load_model(
+    model_name_or_path = "CompVis/stable-diffusion-v1-4" if os.getenv("MODEL_DIR_PATH") is None else os.getenv("MODEL_DIR_PATH"),
+    provider=exeuction_provider
+)
+print("[+] Model loaded")

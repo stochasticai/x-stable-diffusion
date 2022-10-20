@@ -163,6 +163,7 @@ You can also experiment with reducing the `image_size`.
 
 ## How to run with Google Colab?
 
+- [Try PyTorch - FP16 in Colab](https://colab.research.google.com/drive/1m3n2n5bfNpRgWJ8K-xwTvhzrTQETWduq?usp=sharing)
 - [Try TensorRT in Colab ->](https://colab.research.google.com/drive/1WQ98YBHTG355vL5wKbmNj9xeBmHRZGJb?usp=sharing)
 
 In each folder, we will provide a Google Colab notebook with which you can test the full flow and inference on a T4 GPU

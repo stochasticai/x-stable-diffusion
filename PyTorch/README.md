@@ -7,7 +7,7 @@ The Stable Diffusion model will be downloaded from the Hugging Face Hub. That's 
 huggingface-cli login
 ```
 
-If not, you can download the same model from the following S3 path: `s3://stochasticai/stable-diffusion/torch_model/`
+If not, you can download the same model from the following S3 path: `https://downloads.stochastic.ai/stable-diffusion/pytorch_model.zip`
 
 ### 1.1. Docker execution
 [Install Docker](https://docs.docker.com/engine/install/)

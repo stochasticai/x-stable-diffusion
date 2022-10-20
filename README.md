@@ -190,7 +190,7 @@ Stochastic was founded with a vision to make deep learning optimization and depl
 ### [Sign up →](https://www.stochastic.ai/)
 
 
-## Reference
+## References
 
 - [HuggingFace Diffusers](https://github.com/huggingface/diffusers)
 - [AITemplate](https://github.com/facebookincubator/AITemplate)

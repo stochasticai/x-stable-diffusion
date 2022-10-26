@@ -78,9 +78,9 @@ For `batch_size` 1, these are the latency results:
 
 | project                | Latency (s) |
 | :--------------------- | :---------- |
-| PyTorch           fp16 |  28.5       |
+| PyTorch           fp16 |  16.2       |
 | nvFuser           fp16 |  19.3       |
-| FlashAttention    fp16 |  14.9       |
+| FlashAttention    fp16 |  13.7       |
 | TensorRT          fp16 |  9.3        |
 
 ### Batched results

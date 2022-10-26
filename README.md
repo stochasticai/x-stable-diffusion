@@ -196,3 +196,12 @@ Stochastic was founded with a vision to make deep learning optimization and depl
 - [AITemplate](https://github.com/facebookincubator/AITemplate)
 - [Make stable diffusion up to 100% faster with Memory Efficient Attention](https://www.photoroom.com/tech/stable-diffusion-100-percent-faster-with-memory-efficient-attention/)
 - [Making stable diffusion 25% faster using TensorRT](https://www.photoroom.com/tech/stable-diffusion-25-percent-faster-and-save-seconds/)
+
+
+## Team and contributors
+
+x-stable-diffusion is a community-driven project with several skillful engineers and researchers contributing to it. 
+
+It is currently maintained by: [Toan Do](https://github.com/Toan-Do), [Marcos Rivera](https://github.com/MarcosRiveraMartinez), [Sarthak Langde](https://github.com/sarthaklangde), [Subhash GN](https://github.com/subhash-stc), [Riccardo Romagnoli](https://github.com/RiccardoRomagnoli), [Roman Ageev](https://github.com/StochasticRomanAgeev) and [Glenn Ko](https://github.com/glennko)
+
+

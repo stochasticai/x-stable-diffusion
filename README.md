@@ -127,22 +127,22 @@ If you don't have a Stochastic account, then the CLI will prompt you to quickly 
 > Alternatively, you can deploy stable diffusion without our CLI by checking the steps [here](#manual-deployment).
 
 
-To infer with this deployed model:
+3. To perform inference with this deployed model:
 ```
-stochasticx stable-diffusion infer --prompt "Riding a horse"
+stochasticx stable-diffusion inference --prompt "Riding a horse"
 ```
- Check all the options of the `infer` command:
+ Check all the options of the `inference` command:
 ```
-stochasticx stable-diffusion infer --help
+stochasticx stable-diffusion inference --help
 ```
 
 
-You can get the logs of the deployment executing the following command:
+4. You can get the logs of the deployment executing the following command:
 ```
 stochasticx stable-diffusion logs
 ```
 
-Stop and remove the deployment with this command:
+5. Stop and remove the deployment with this command:
 ```
 stochasticx stable-diffusion stop
 ```

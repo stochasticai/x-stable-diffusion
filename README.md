@@ -83,7 +83,7 @@ For `batch_size` 1, these are the latency results:
 | FlashAttention    fp16 |  13.7       |
 | TensorRT          fp16 |  9.3        |
 
-### Batched results
+### Batched results - A100 GPU
 
 The following results were obtained by varying `batch_size` from 1 to 24.
 

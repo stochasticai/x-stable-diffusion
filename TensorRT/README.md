@@ -5,7 +5,7 @@
 Install TensorRT 8.4.2.2.4
 
 ```
-wget wget https://developer.download.nvidia.com/compute/redist/nvidia-tensorrt/nvidia_tensorrt-8.4.2.4-cp39-none-linux_x86_64.whl
+wget https://developer.download.nvidia.com/compute/redist/nvidia-tensorrt/nvidia_tensorrt-8.4.2.4-cp39-none-linux_x86_64.whl
 pip install nvidia_tensorrt-8.4.2.4-cp39-none-linux_x86_64.whl
 ```
 

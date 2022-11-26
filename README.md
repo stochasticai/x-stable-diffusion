@@ -161,7 +161,7 @@ Change the `num_inference_steps` to `30`. With this, you can get an image genera
 
 You can also experiment with reducing the `image_size`.
 
-## How to run with Google Colab?
+## How to run on Google Colab?
 
 - [Try PyTorch - FP16 in Colab ->](https://colab.research.google.com/drive/1m3n2n5bfNpRgWJ8K-xwTvhzrTQETWduq?usp=sharing)
 - [Try TensorRT in Colab ->](https://colab.research.google.com/drive/1WQ98YBHTG355vL5wKbmNj9xeBmHRZGJb?usp=sharing)
@@ -181,26 +181,25 @@ Check the `README.md` of the following directories:
 
 Stochastic was founded with a vision to make deep learning optimization and deployment effortless. We make it easy to ship state-of-the-art AI models with production-grade performance.
 
-### Features
+### Stochastic X: AI Acceleration Platform
 - Auto-optimization of deep learning models
 - Benchmarking of models and hardware on different evaluation metrics
-- Auto-scaling hosted and on-prem accelerated inference for models like BLOOM 176B, Stable Diffusion, GPT-J [Enquire →](https://stochastic.ai/contact)
+- Auto-scaling accelerated inference for models like BLOOM 176B, Stable Diffusion, GPT-J
 - Support for AWS, GCP, Azure clouds and Kubernetes clusters
 
-### [Sign up →](https://www.stochastic.ai/)
+For fully-managed solution hosted on Stochastic Cloud [Sign up →](https://www.stochastic.ai/)
+For private hosting on your cloud or on-prem [Contact us →](https://stochastic.ai/contact)
 
 
 ## References
 
 - [HuggingFace Diffusers](https://github.com/huggingface/diffusers)
 - [AITemplate](https://github.com/facebookincubator/AITemplate)
-- [Make stable diffusion up to 100% faster with Memory Efficient Attention](https://www.photoroom.com/tech/stable-diffusion-100-percent-faster-with-memory-efficient-attention/)
-- [Making stable diffusion 25% faster using TensorRT](https://www.photoroom.com/tech/stable-diffusion-25-percent-faster-and-save-seconds/)
 
 
 ## Team and contributors
 
-x-stable-diffusion is a community-driven project with several skillful engineers and researchers contributing to it. 
+x-stable-diffusion is a community-driven project with several AI systems engineers and researchers contributing to it. 
 
 It is currently maintained by: [Toan Do](https://github.com/Toan-Do), [Marcos Rivera](https://github.com/MarcosRiveraMartinez), [Sarthak Langde](https://github.com/sarthaklangde), [Subhash GN](https://github.com/subhash-stc), [Riccardo Romagnoli](https://github.com/RiccardoRomagnoli), [Roman Ageev](https://github.com/StochasticRomanAgeev) and [Glenn Ko](https://github.com/glennko)
 

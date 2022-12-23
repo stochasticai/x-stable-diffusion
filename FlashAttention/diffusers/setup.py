@@ -109,7 +109,9 @@ _deps = [
 # packaging: "packaging"
 #
 # some of the values are versioned whereas others aren't.
-deps = {b: a for a, b in (re.findall(r"^(([^!=<>~]+)(?:[!=<>~].*)?$)", x)[0] for x in _deps)}
+deps = {
+    b: a for a, b in (re.findall(r"^(([^!=<>~]+)(?:[!=<>~].*)?$)", x)[0] for x in _deps)
+}
 
 # since we save this data in src/diffusers/dependency_versions_table.py it can be easily accessed from
 # anywhere. If you need to quickly access the data from this table in a shell, you can do so easily with:
@@ -141,7 +143,11 @@ class DepsTableUpdateCommand(Command):
     description = "build runtime dependency table"
     user_options = [
         # format: (long option, short option, description).
-        ("dep-table-update", None, "updates src/diffusers/dependency_versions_table.py"),
+        (
+            "dep-table-update",
+            None,
+            "updates src/diffusers/dependency_versions_table.py",
+        ),
     ]
 
     def initialize_options(self):
@@ -174,7 +180,15 @@ extras = {}
 extras["quality"] = ["black==22.8", "isort>=5.5.4", "flake8>=3.8.3", "hf-doc-builder"]
 extras["docs"] = ["hf-doc-builder"]
 extras["training"] = ["accelerate", "datasets", "tensorboard", "modelcards"]
-extras["test"] = ["datasets", "onnxruntime", "pytest", "pytest-timeout", "pytest-xdist", "scipy", "transformers"]
+extras["test"] = [
+    "datasets",
+    "onnxruntime",
+    "pytest",
+    "pytest-timeout",
+    "pytest-xdist",
+    "scipy",
+    "transformers",
+]
 extras["torch"] = deps_list("torch")
 
 if os.name == "nt":  # windows
@@ -183,7 +197,12 @@ else:
     extras["flax"] = deps_list("jax", "jaxlib", "flax")
 
 extras["dev"] = (
-    extras["quality"] + extras["test"] + extras["training"] + extras["docs"] + extras["torch"] + extras["flax"]
+    extras["quality"]
+    + extras["test"]
+    + extras["training"]
+    + extras["docs"]
+    + extras["torch"]
+    + extras["flax"]
 )
 
 install_requires = [
@@ -213,7 +232,9 @@ setup(
     python_requires=">=3.7.0",
     install_requires=install_requires,
     extras_require=extras,
-    entry_points={"console_scripts": ["diffusers-cli=diffusers.commands.diffusers_cli:main"]},
+    entry_points={
+        "console_scripts": ["diffusers-cli=diffusers.commands.diffusers_cli:main"]
+    },
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",

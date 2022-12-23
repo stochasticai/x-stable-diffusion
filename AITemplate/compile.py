@@ -339,7 +339,11 @@ def compile_diffusers(token, batch_size, use_fp16_acc=True, convert_conv_to_gemm
     ).to("cuda")
 
     # CLIP
-    compile_clip(batch_size=batch_size, use_fp16_acc=use_fp16_acc, convert_conv_to_gemm=convert_conv_to_gemm)
+    compile_clip(
+        batch_size=batch_size,
+        use_fp16_acc=use_fp16_acc,
+        convert_conv_to_gemm=convert_conv_to_gemm,
+    )
     # UNet
     compile_unet(
         batch_size=batch_size * 2,
@@ -347,7 +351,11 @@ def compile_diffusers(token, batch_size, use_fp16_acc=True, convert_conv_to_gemm
         convert_conv_to_gemm=convert_conv_to_gemm,
     )
     # VAE
-    compile_vae(batch_size=batch_size, use_fp16_acc=use_fp16_acc, convert_conv_to_gemm=convert_conv_to_gemm)
+    compile_vae(
+        batch_size=batch_size,
+        use_fp16_acc=use_fp16_acc,
+        convert_conv_to_gemm=convert_conv_to_gemm,
+    )
 
 
 if __name__ == "__main__":

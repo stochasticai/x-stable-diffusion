@@ -80,7 +80,12 @@ class DDPMPipeline(DiffusionPipeline):
 
         # Sample gaussian noise to begin loop
         image = torch.randn(
-            (batch_size, self.unet.in_channels, self.unet.sample_size, self.unet.sample_size),
+            (
+                batch_size,
+                self.unet.in_channels,
+                self.unet.sample_size,
+                self.unet.sample_size,
+            ),
             generator=generator,
         )
         image = image.to(self.device)
@@ -93,7 +98,9 @@ class DDPMPipeline(DiffusionPipeline):
             model_output = self.unet(image, t).sample
 
             # 2. compute previous image: x_t -> t_t-1
-            image = self.scheduler.step(model_output, t, image, generator=generator).prev_sample
+            image = self.scheduler.step(
+                model_output, t, image, generator=generator
+            ).prev_sample
 
         image = (image / 2 + 0.5).clamp(0, 1)
         image = image.cpu().permute(0, 2, 3, 1).numpy()

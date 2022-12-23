@@ -6,8 +6,7 @@ from PIL import Image
 
 
 def load_model(
-    model_name_or_path="CompVis/stable-diffusion-v1-4",
-    provider="CUDAExecutionProvider"
+    model_name_or_path="CompVis/stable-diffusion-v1-4", provider="CUDAExecutionProvider"
 ) -> StableDiffusionOnnxPipeline:
     """Loads the model
 
@@ -15,15 +14,16 @@ def load_model(
     :param provider: execution provider - Onnx Runtime, defaults to "CUDAExecutionProvider"
     :return: the model
     """
-    
+
     pipe = StableDiffusionOnnxPipeline.from_pretrained(
-        model_name_or_path, 
+        model_name_or_path,
         revision="onnx",
         provider=provider,
         use_auth_token=True,
     )
-    
+
     return pipe
+
 
 def inference(
     model: StableDiffusionOnnxPipeline,
@@ -34,7 +34,7 @@ def inference(
     guidance_scale: float = 7.5,
     num_images_per_prompt: int = 1,
     seed: int = None,
-    return_time=False
+    return_time=False,
 ) -> Image:
     """Function to start generating images
 
@@ -51,7 +51,7 @@ def inference(
     """
     generator = None
     if seed is not None:
-        generator = torch.Generator(device='cuda')
+        generator = torch.Generator(device="cuda")
         generator = generator.manual_seed(seed)
 
     start_time = time.time()
@@ -62,11 +62,11 @@ def inference(
         num_inference_steps=num_inference_steps,
         guidance_scale=guidance_scale,
         num_images_per_prompt=num_images_per_prompt,
-        generator=generator
+        generator=generator,
     )
     end_time = time.time()
-    
+
     if return_time:
         return output.images, end_time - start_time
-    
+
     return output.images

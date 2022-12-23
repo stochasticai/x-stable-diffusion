@@ -104,7 +104,9 @@ results["google_ddpm_ema_cat_256"] = torch.tensor([
 models = api.list_models(filter="diffusers")
 for mod in models:
     if "google" in mod.author or mod.modelId == "CompVis/ldm-celebahq-256":
-        local_checkpoint = "/home/patrick/google_checkpoints/" + mod.modelId.split("/")[-1]
+        local_checkpoint = (
+            "/home/patrick/google_checkpoints/" + mod.modelId.split("/")[-1]
+        )
 
         print(f"Started running {mod.modelId}!!!")
 
@@ -116,12 +118,19 @@ for mod in models:
         torch.manual_seed(0)
         random.seed(0)
 
-        noise = torch.randn(1, model.config.in_channels, model.config.sample_size, model.config.sample_size)
+        noise = torch.randn(
+            1,
+            model.config.in_channels,
+            model.config.sample_size,
+            model.config.sample_size,
+        )
         time_step = torch.tensor([10] * noise.shape[0])
         with torch.no_grad():
             logits = model(noise, time_step).sample
 
         assert torch.allclose(
-            logits[0, 0, 0, :30], results["_".join("_".join(mod.modelId.split("/")).split("-"))], atol=1e-3
+            logits[0, 0, 0, :30],
+            results["_".join("_".join(mod.modelId.split("/")).split("-"))],
+            atol=1e-3,
         )
         print(f"{mod.modelId} has passed successfully!!!")

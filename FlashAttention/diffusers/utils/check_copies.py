@@ -73,7 +73,11 @@ LOCALIZED_READMES = {
 
 
 def _should_continue(line, indent):
-    return line.startswith(indent) or len(line) <= 1 or re.search(r"^\s*\)(\s*->.*:|:)\s*$", line) is not None
+    return (
+        line.startswith(indent)
+        or len(line) <= 1
+        or re.search(r"^\s*\)(\s*->.*:|:)\s*$", line) is not None
+    )
 
 
 def find_code_in_diffusers(object_name):
@@ -83,14 +87,23 @@ def find_code_in_diffusers(object_name):
 
     # First let's find the module where our object lives.
     module = parts[i]
-    while i < len(parts) and not os.path.isfile(os.path.join(TRANSFORMERS_PATH, f"{module}.py")):
+    while i < len(parts) and not os.path.isfile(
+        os.path.join(TRANSFORMERS_PATH, f"{module}.py")
+    ):
         i += 1
         if i < len(parts):
             module = os.path.join(module, parts[i])
     if i >= len(parts):
-        raise ValueError(f"`object_name` should begin with the name of a module of diffusers but got {object_name}.")
+        raise ValueError(
+            f"`object_name` should begin with the name of a module of diffusers but got {object_name}."
+        )
 
-    with open(os.path.join(TRANSFORMERS_PATH, f"{module}.py"), "r", encoding="utf-8", newline="\n") as f:
+    with open(
+        os.path.join(TRANSFORMERS_PATH, f"{module}.py"),
+        "r",
+        encoding="utf-8",
+        newline="\n",
+    ) as f:
         lines = f.readlines()
 
     # Now let's find the class / func in the code!
@@ -98,14 +111,18 @@ def find_code_in_diffusers(object_name):
     line_index = 0
     for name in parts[i + 1 :]:
         while (
-            line_index < len(lines) and re.search(rf"^{indent}(class|def)\s+{name}(\(|\:)", lines[line_index]) is None
+            line_index < len(lines)
+            and re.search(rf"^{indent}(class|def)\s+{name}(\(|\:)", lines[line_index])
+            is None
         ):
             line_index += 1
         indent += "    "
         line_index += 1
 
     if line_index >= len(lines):
-        raise ValueError(f" {object_name} does not match any function or class in {module}.")
+        raise ValueError(
+            f" {object_name} does not match any function or class in {module}."
+        )
 
     # We found the beginning of the class / func, now let's find the end (when the indent diminishes).
     start_index = line_index
@@ -119,7 +136,9 @@ def find_code_in_diffusers(object_name):
     return "".join(code_lines)
 
 
-_re_copy_warning = re.compile(r"^(\s*)#\s*Copied from\s+diffusers\.(\S+\.\S+)\s*($|\S.*$)")
+_re_copy_warning = re.compile(
+    r"^(\s*)#\s*Copied from\s+diffusers\.(\S+\.\S+)\s*($|\S.*$)"
+)
 _re_replace_pattern = re.compile(r"^\s*(\S+)->(\S+)(\s+.*|$)")
 
 
@@ -140,7 +159,9 @@ def blackify(code):
     has_indent = len(get_indent(code)) > 0
     if has_indent:
         code = f"class Bla:\n{code}"
-    mode = black.Mode(target_versions={black.TargetVersion.PY35}, line_length=119, preview=True)
+    mode = black.Mode(
+        target_versions={black.TargetVersion.PY35}, line_length=119, preview=True
+    )
     result = black.format_str(code, mode=mode)
     result, _ = style_docstrings_in_code(result)
     return result[len("class Bla:\n") :] if has_indent else result
@@ -179,7 +200,10 @@ def is_copy_consistent(filename, overwrite=False):
             if line_index >= len(lines):
                 break
             line = lines[line_index]
-            should_continue = _should_continue(line, indent) and re.search(f"^{indent}# End copy", line) is None
+            should_continue = (
+                _should_continue(line, indent)
+                and re.search(f"^{indent}# End copy", line) is None
+            )
         # Clean up empty lines at the end (if any).
         while len(lines[line_index - 1]) <= 1:
             line_index -= 1
@@ -197,8 +221,12 @@ def is_copy_consistent(filename, overwrite=False):
                 obj1, obj2, option = pattern.groups()
                 theoretical_code = re.sub(obj1, obj2, theoretical_code)
                 if option.strip() == "all-casing":
-                    theoretical_code = re.sub(obj1.lower(), obj2.lower(), theoretical_code)
-                    theoretical_code = re.sub(obj1.upper(), obj2.upper(), theoretical_code)
+                    theoretical_code = re.sub(
+                        obj1.lower(), obj2.lower(), theoretical_code
+                    )
+                    theoretical_code = re.sub(
+                        obj1.upper(), obj2.upper(), theoretical_code
+                    )
 
             # Blackify after replacement. To be able to do that, we need the header (class or function definition)
             # from the previous line
@@ -225,7 +253,10 @@ def check_copies(overwrite: bool = False):
     diffs = []
     for filename in all_files:
         new_diffs = is_copy_consistent(filename, overwrite)
-        diffs += [f"- {filename}: copy does not match {d[0]} at line {d[1]}" for d in new_diffs]
+        diffs += [
+            f"- {filename}: copy does not match {d[0]} at line {d[1]}"
+            for d in new_diffs
+        ]
     if not overwrite and len(diffs) > 0:
         diff = "\n".join(diffs)
         raise Exception(
@@ -264,7 +295,9 @@ def check_full_copies(overwrite: bool = False):
 
 def get_model_list(filename, start_prompt, end_prompt):
     """Extracts the model list from the README."""
-    with open(os.path.join(REPO_PATH, filename), "r", encoding="utf-8", newline="\n") as f:
+    with open(
+        os.path.join(REPO_PATH, filename), "r", encoding="utf-8", newline="\n"
+    ) as f:
         lines = f.readlines()
     # Find the start of the list.
     start_index = 0
@@ -294,7 +327,14 @@ def convert_to_localized_md(model_list, localized_model_list, format_str):
     """Convert `model_list` to each localized README."""
 
     def _rep(match):
-        title, model_link, paper_affiliations, paper_title_link, paper_authors, supplements = match.groups()
+        (
+            title,
+            model_link,
+            paper_affiliations,
+            paper_title_link,
+            paper_authors,
+            supplements,
+        ) = match.groups()
         return format_str.format(
             title=title,
             model_link=model_link,
@@ -321,13 +361,20 @@ def convert_to_localized_md(model_list, localized_model_list, format_str):
                 for line in localized_model_list.strip().split("\n")
             }
         except AttributeError:
-            raise AttributeError("A model name in localized READMEs cannot be recognized.")
+            raise AttributeError(
+                "A model name in localized READMEs cannot be recognized."
+            )
 
-    model_keys = [re.search(r"\*\*\[([^\]]*)", line).groups()[0] for line in model_list.strip().split("\n")]
+    model_keys = [
+        re.search(r"\*\*\[([^\]]*)", line).groups()[0]
+        for line in model_list.strip().split("\n")
+    ]
 
     # We exclude keys in localized README not in the main one.
     readmes_match = not any([k not in model_keys for k in localized_model_index])
-    localized_model_index = {k: v for k, v in localized_model_index.items() if k in model_keys}
+    localized_model_index = {
+        k: v for k, v in localized_model_index.items() if k in model_keys
+    }
 
     for model in model_list.strip().split("\n"):
         title, model_link = _re_capture_title_link.search(model).groups()
@@ -381,15 +428,25 @@ def _find_text_in_file(filename, start_prompt, end_prompt):
 def check_model_list_copy(overwrite=False, max_per_line=119):
     """Check the model lists in the README and index.rst are consistent and maybe `overwrite`."""
     # Fix potential doc links in the README
-    with open(os.path.join(REPO_PATH, "README.md"), "r", encoding="utf-8", newline="\n") as f:
+    with open(
+        os.path.join(REPO_PATH, "README.md"), "r", encoding="utf-8", newline="\n"
+    ) as f:
         readme = f.read()
-    new_readme = readme.replace("https://huggingface.co/diffusers", "https://huggingface.co/docs/diffusers")
+    new_readme = readme.replace(
+        "https://huggingface.co/diffusers", "https://huggingface.co/docs/diffusers"
+    )
     new_readme = new_readme.replace(
-        "https://huggingface.co/docs/main/diffusers", "https://huggingface.co/docs/diffusers/main"
+        "https://huggingface.co/docs/main/diffusers",
+        "https://huggingface.co/docs/diffusers/main",
     )
     if new_readme != readme:
         if overwrite:
-            with open(os.path.join(REPO_PATH, "README.md"), "w", encoding="utf-8", newline="\n") as f:
+            with open(
+                os.path.join(REPO_PATH, "README.md"),
+                "w",
+                encoding="utf-8",
+                newline="\n",
+            ) as f:
                 f.write(new_readme)
         else:
             raise ValueError(
@@ -416,15 +473,26 @@ def check_model_list_copy(overwrite=False, max_per_line=119):
         _format_model_list = value["format_model_list"]
 
         localized_md_list = get_model_list(filename, _start_prompt, _end_prompt)
-        readmes_match, converted_md_list = convert_to_localized_md(md_list, localized_md_list, _format_model_list)
+        readmes_match, converted_md_list = convert_to_localized_md(
+            md_list, localized_md_list, _format_model_list
+        )
 
-        converted_md_lists.append((filename, readmes_match, converted_md_list, _start_prompt, _end_prompt))
+        converted_md_lists.append(
+            (filename, readmes_match, converted_md_list, _start_prompt, _end_prompt)
+        )
 
     converted_md_list = convert_readme_to_index(md_list)
     if converted_md_list != index_list:
         if overwrite:
-            with open(os.path.join(PATH_TO_DOCS, "index.mdx"), "w", encoding="utf-8", newline="\n") as f:
-                f.writelines(lines[:start_index] + [converted_md_list] + lines[end_index:])
+            with open(
+                os.path.join(PATH_TO_DOCS, "index.mdx"),
+                "w",
+                encoding="utf-8",
+                newline="\n",
+            ) as f:
+                f.writelines(
+                    lines[:start_index] + [converted_md_list] + lines[end_index:]
+                )
         else:
             raise ValueError(
                 "The model list in the README changed and the list in `index.mdx` has not been updated. Run "
@@ -432,15 +500,25 @@ def check_model_list_copy(overwrite=False, max_per_line=119):
             )
 
     for converted_md_list in converted_md_lists:
-        filename, readmes_match, converted_md, _start_prompt, _end_prompt = converted_md_list
+        (
+            filename,
+            readmes_match,
+            converted_md,
+            _start_prompt,
+            _end_prompt,
+        ) = converted_md_list
 
         if filename == "README.md":
             continue
         if overwrite:
             _, start_index, end_index, lines = _find_text_in_file(
-                filename=os.path.join(REPO_PATH, filename), start_prompt=_start_prompt, end_prompt=_end_prompt
+                filename=os.path.join(REPO_PATH, filename),
+                start_prompt=_start_prompt,
+                end_prompt=_end_prompt,
             )
-            with open(os.path.join(REPO_PATH, filename), "w", encoding="utf-8", newline="\n") as f:
+            with open(
+                os.path.join(REPO_PATH, filename), "w", encoding="utf-8", newline="\n"
+            ) as f:
                 f.writelines(lines[:start_index] + [converted_md] + lines[end_index:])
         elif not readmes_match:
             raise ValueError(
@@ -451,7 +529,11 @@ def check_model_list_copy(overwrite=False, max_per_line=119):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--fix_and_overwrite", action="store_true", help="Whether to fix inconsistencies.")
+    parser.add_argument(
+        "--fix_and_overwrite",
+        action="store_true",
+        help="Whether to fix inconsistencies.",
+    )
     args = parser.parse_args()
 
     check_copies(args.fix_and_overwrite)

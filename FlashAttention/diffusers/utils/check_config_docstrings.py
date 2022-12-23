@@ -72,12 +72,17 @@ def check_config_docstrings_have_checkpoints():
                 break
 
         name = config_class.__name__
-        if not checkpoint_found and name not in CONFIG_CLASSES_TO_IGNORE_FOR_DOCSTRING_CHECKPOINT_CHECK:
+        if (
+            not checkpoint_found
+            and name not in CONFIG_CLASSES_TO_IGNORE_FOR_DOCSTRING_CHECKPOINT_CHECK
+        ):
             configs_without_checkpoint.append(name)
 
     if len(configs_without_checkpoint) > 0:
         message = "\n".join(sorted(configs_without_checkpoint))
-        raise ValueError(f"The following configurations don't contain any valid checkpoint:\n{message}")
+        raise ValueError(
+            f"The following configurations don't contain any valid checkpoint:\n{message}"
+        )
 
 
 if __name__ == "__main__":

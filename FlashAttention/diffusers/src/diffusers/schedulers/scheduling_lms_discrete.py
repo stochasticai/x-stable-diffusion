@@ -62,12 +62,24 @@ class LMSDiscreteScheduler(SchedulerMixin, ConfigMixin):
         if trained_betas is not None:
             self.betas = np.asarray(trained_betas)
         if beta_schedule == "linear":
-            self.betas = np.linspace(beta_start, beta_end, num_train_timesteps, dtype=np.float32)
+            self.betas = np.linspace(
+                beta_start, beta_end, num_train_timesteps, dtype=np.float32
+            )
         elif beta_schedule == "scaled_linear":
             # this schedule is very specific to the latent diffusion model.
-            self.betas = np.linspace(beta_start**0.5, beta_end**0.5, num_train_timesteps, dtype=np.float32) ** 2
+            self.betas = (
+                np.linspace(
+                    beta_start**0.5,
+                    beta_end**0.5,
+                    num_train_timesteps,
+                    dtype=np.float32,
+                )
+                ** 2
+            )
         else:
-            raise NotImplementedError(f"{beta_schedule} does is not implemented for {self.__class__}")
+            raise NotImplementedError(
+                f"{beta_schedule} does is not implemented for {self.__class__}"
+            )
 
         self.alphas = 1.0 - self.betas
         self.alphas_cumprod = np.cumprod(self.alphas, axis=0)
@@ -97,10 +109,14 @@ class LMSDiscreteScheduler(SchedulerMixin, ConfigMixin):
             for k in range(order):
                 if current_order == k:
                     continue
-                prod *= (tau - self.sigmas[t - k]) / (self.sigmas[t - current_order] - self.sigmas[t - k])
+                prod *= (tau - self.sigmas[t - k]) / (
+                    self.sigmas[t - current_order] - self.sigmas[t - k]
+                )
             return prod
 
-        integrated_coeff = integrate.quad(lms_derivative, self.sigmas[t], self.sigmas[t + 1], epsrel=1e-4)[0]
+        integrated_coeff = integrate.quad(
+            lms_derivative, self.sigmas[t], self.sigmas[t + 1], epsrel=1e-4
+        )[0]
 
         return integrated_coeff
 
@@ -113,7 +129,9 @@ class LMSDiscreteScheduler(SchedulerMixin, ConfigMixin):
                 the number of diffusion steps used when generating samples with a pre-trained model.
         """
         self.num_inference_steps = num_inference_steps
-        self.timesteps = np.linspace(self.config.num_train_timesteps - 1, 0, num_inference_steps, dtype=float)
+        self.timesteps = np.linspace(
+            self.config.num_train_timesteps - 1, 0, num_inference_steps, dtype=float
+        )
 
         low_idx = np.floor(self.timesteps).astype(int)
         high_idx = np.ceil(self.timesteps).astype(int)
@@ -165,11 +183,15 @@ class LMSDiscreteScheduler(SchedulerMixin, ConfigMixin):
 
         # 3. Compute linear multistep coefficients
         order = min(timestep + 1, order)
-        lms_coeffs = [self.get_lms_coefficient(order, timestep, curr_order) for curr_order in range(order)]
+        lms_coeffs = [
+            self.get_lms_coefficient(order, timestep, curr_order)
+            for curr_order in range(order)
+        ]
 
         # 4. Compute previous sample based on the derivatives path
         prev_sample = sample + sum(
-            coeff * derivative for coeff, derivative in zip(lms_coeffs, reversed(self.derivatives))
+            coeff * derivative
+            for coeff, derivative in zip(lms_coeffs, reversed(self.derivatives))
         )
 
         if not return_dict:

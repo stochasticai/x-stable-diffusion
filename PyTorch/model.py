@@ -5,7 +5,7 @@ import time
 
 
 def load_model(
-    model_name_or_path="CompVis/stable-diffusion-v1-4"
+    model_name_or_path="CompVis/stable-diffusion-v1-4",
 ) -> StableDiffusionPipeline:
     """Load model
 
@@ -13,13 +13,13 @@ def load_model(
     :return: the Stable Diffusion pipeline
     """
     pipe = StableDiffusionPipeline.from_pretrained(
-        model_name_or_path, 
-        revision="fp16", 
+        model_name_or_path,
+        revision="fp16",
         torch_dtype=torch.float16,
-        use_auth_token=True
+        use_auth_token=True,
     )
     pipe = pipe.to("cuda")
-    
+
     return pipe
 
 
@@ -32,7 +32,7 @@ def inference(
     guidance_scale: float = 7.5,
     num_images_per_prompt: int = 1,
     seed: int = None,
-    return_time=False
+    return_time=False,
 ):
     """Do inference
 
@@ -49,7 +49,7 @@ def inference(
     """
     generator = None
     if seed is not None:
-        generator = torch.Generator(device='cuda')
+        generator = torch.Generator(device="cuda")
         generator = generator.manual_seed(seed)
 
     start_time = time.time()
@@ -61,12 +61,11 @@ def inference(
             num_inference_steps=num_inference_steps,
             guidance_scale=guidance_scale,
             num_images_per_prompt=num_images_per_prompt,
-            generator=generator
+            generator=generator,
         )
     end_time = time.time()
-    
+
     if return_time:
         return output.images, end_time - start_time
-    
+
     return output.images
-    

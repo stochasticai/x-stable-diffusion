@@ -24,7 +24,11 @@ from collections import OrderedDict
 from typing import Any, Dict, Tuple, Union
 
 from huggingface_hub import hf_hub_download
-from huggingface_hub.utils import EntryNotFoundError, RepositoryNotFoundError, RevisionNotFoundError
+from huggingface_hub.utils import (
+    EntryNotFoundError,
+    RepositoryNotFoundError,
+    RevisionNotFoundError,
+)
 from requests import HTTPError
 
 from . import __version__
@@ -54,7 +58,9 @@ class ConfigMixin:
 
     def register_to_config(self, **kwargs):
         if self.config_name is None:
-            raise NotImplementedError(f"Make sure that {self.__class__} has defined a class name `config_name`")
+            raise NotImplementedError(
+                f"Make sure that {self.__class__} has defined a class name `config_name`"
+            )
         kwargs["_class_name"] = self.__class__.__name__
         kwargs["_diffusers_version"] = __version__
 
@@ -74,7 +80,12 @@ class ConfigMixin:
 
         self._internal_dict = FrozenDict(internal_dict)
 
-    def save_config(self, save_directory: Union[str, os.PathLike], push_to_hub: bool = False, **kwargs):
+    def save_config(
+        self,
+        save_directory: Union[str, os.PathLike],
+        push_to_hub: bool = False,
+        **kwargs,
+    ):
         """
         Save a configuration object to the directory `save_directory`, so that it can be re-loaded using the
         [`~ConfigMixin.from_config`] class method.
@@ -84,7 +95,9 @@ class ConfigMixin:
                 Directory where the configuration JSON file will be saved (will be created if it does not exist).
         """
         if os.path.isfile(save_directory):
-            raise AssertionError(f"Provided path ({save_directory}) should be a directory, not a file")
+            raise AssertionError(
+                f"Provided path ({save_directory}) should be a directory, not a file"
+            )
 
         os.makedirs(save_directory, exist_ok=True)
 
@@ -95,7 +108,12 @@ class ConfigMixin:
         logger.info(f"ConfigMixinuration saved in {output_config_file}")
 
     @classmethod
-    def from_config(cls, pretrained_model_name_or_path: Union[str, os.PathLike], return_unused_kwargs=False, **kwargs):
+    def from_config(
+        cls,
+        pretrained_model_name_or_path: Union[str, os.PathLike],
+        return_unused_kwargs=False,
+        **kwargs,
+    ):
         r"""
         Instantiate a Python class from a pre-defined JSON-file.
 
@@ -153,7 +171,9 @@ class ConfigMixin:
         </Tip>
 
         """
-        config_dict = cls.get_config_dict(pretrained_model_name_or_path=pretrained_model_name_or_path, **kwargs)
+        config_dict = cls.get_config_dict(
+            pretrained_model_name_or_path=pretrained_model_name_or_path, **kwargs
+        )
 
         init_dict, unused_kwargs = cls.extract_init_dict(config_dict, **kwargs)
 
@@ -191,13 +211,19 @@ class ConfigMixin:
         if os.path.isfile(pretrained_model_name_or_path):
             config_file = pretrained_model_name_or_path
         elif os.path.isdir(pretrained_model_name_or_path):
-            if os.path.isfile(os.path.join(pretrained_model_name_or_path, cls.config_name)):
+            if os.path.isfile(
+                os.path.join(pretrained_model_name_or_path, cls.config_name)
+            ):
                 # Load from a PyTorch checkpoint
-                config_file = os.path.join(pretrained_model_name_or_path, cls.config_name)
+                config_file = os.path.join(
+                    pretrained_model_name_or_path, cls.config_name
+                )
             elif subfolder is not None and os.path.isfile(
                 os.path.join(pretrained_model_name_or_path, subfolder, cls.config_name)
             ):
-                config_file = os.path.join(pretrained_model_name_or_path, subfolder, cls.config_name)
+                config_file = os.path.join(
+                    pretrained_model_name_or_path, subfolder, cls.config_name
+                )
             else:
                 raise EnvironmentError(
                     f"Error no file named {cls.config_name} found in directory {pretrained_model_name_or_path}."
@@ -261,7 +287,9 @@ class ConfigMixin:
             # Load config dict
             config_dict = cls._dict_from_json_file(config_file)
         except (json.JSONDecodeError, UnicodeDecodeError):
-            raise EnvironmentError(f"It looks like the config file at '{config_file}' is not a valid JSON file.")
+            raise EnvironmentError(
+                f"It looks like the config file at '{config_file}' is not a valid JSON file."
+            )
 
         return config_dict
 
@@ -344,25 +372,37 @@ class FrozenDict(OrderedDict):
         self.__frozen = True
 
     def __delitem__(self, *args, **kwargs):
-        raise Exception(f"You cannot use ``__delitem__`` on a {self.__class__.__name__} instance.")
+        raise Exception(
+            f"You cannot use ``__delitem__`` on a {self.__class__.__name__} instance."
+        )
 
     def setdefault(self, *args, **kwargs):
-        raise Exception(f"You cannot use ``setdefault`` on a {self.__class__.__name__} instance.")
+        raise Exception(
+            f"You cannot use ``setdefault`` on a {self.__class__.__name__} instance."
+        )
 
     def pop(self, *args, **kwargs):
-        raise Exception(f"You cannot use ``pop`` on a {self.__class__.__name__} instance.")
+        raise Exception(
+            f"You cannot use ``pop`` on a {self.__class__.__name__} instance."
+        )
 
     def update(self, *args, **kwargs):
-        raise Exception(f"You cannot use ``update`` on a {self.__class__.__name__} instance.")
+        raise Exception(
+            f"You cannot use ``update`` on a {self.__class__.__name__} instance."
+        )
 
     def __setattr__(self, name, value):
         if hasattr(self, "__frozen") and self.__frozen:
-            raise Exception(f"You cannot use ``__setattr__`` on a {self.__class__.__name__} instance.")
+            raise Exception(
+                f"You cannot use ``__setattr__`` on a {self.__class__.__name__} instance."
+            )
         super().__setattr__(name, value)
 
     def __setitem__(self, name, value):
         if hasattr(self, "__frozen") and self.__frozen:
-            raise Exception(f"You cannot use ``__setattr__`` on a {self.__class__.__name__} instance.")
+            raise Exception(
+                f"You cannot use ``__setattr__`` on a {self.__class__.__name__} instance."
+            )
         super().__setitem__(name, value)
 
 
@@ -391,7 +431,9 @@ def register_to_config(init):
         new_kwargs = {}
         signature = inspect.signature(init)
         parameters = {
-            name: p.default for i, (name, p) in enumerate(signature.parameters.items()) if i > 0 and name not in ignore
+            name: p.default
+            for i, (name, p) in enumerate(signature.parameters.items())
+            if i > 0 and name not in ignore
         }
         for arg, name in zip(args, parameters.keys()):
             new_kwargs[name] = arg

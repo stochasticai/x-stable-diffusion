@@ -97,17 +97,25 @@ class ScoreSdeVeScheduler(SchedulerMixin, ConfigMixin):
             sampling_eps (`float`, optional): final timestep value (overrides value given at Scheduler instantiation).
 
         """
-        sampling_eps = sampling_eps if sampling_eps is not None else self.config.sampling_eps
+        sampling_eps = (
+            sampling_eps if sampling_eps is not None else self.config.sampling_eps
+        )
         tensor_format = getattr(self, "tensor_format", "pt")
         if tensor_format == "np":
             self.timesteps = np.linspace(1, sampling_eps, num_inference_steps)
         elif tensor_format == "pt":
             self.timesteps = torch.linspace(1, sampling_eps, num_inference_steps)
         else:
-            raise ValueError(f"`self.tensor_format`: {self.tensor_format} is not valid.")
+            raise ValueError(
+                f"`self.tensor_format`: {self.tensor_format} is not valid."
+            )
 
     def set_sigmas(
-        self, num_inference_steps: int, sigma_min: float = None, sigma_max: float = None, sampling_eps: float = None
+        self,
+        num_inference_steps: int,
+        sigma_min: float = None,
+        sigma_max: float = None,
+        sampling_eps: float = None,
     ):
         """
         Sets the noise scales used for the diffusion chain. Supporting function to be run before inference.
@@ -125,24 +133,40 @@ class ScoreSdeVeScheduler(SchedulerMixin, ConfigMixin):
         """
         sigma_min = sigma_min if sigma_min is not None else self.config.sigma_min
         sigma_max = sigma_max if sigma_max is not None else self.config.sigma_max
-        sampling_eps = sampling_eps if sampling_eps is not None else self.config.sampling_eps
+        sampling_eps = (
+            sampling_eps if sampling_eps is not None else self.config.sampling_eps
+        )
         if self.timesteps is None:
             self.set_timesteps(num_inference_steps, sampling_eps)
 
         tensor_format = getattr(self, "tensor_format", "pt")
         if tensor_format == "np":
-            self.discrete_sigmas = np.exp(np.linspace(np.log(sigma_min), np.log(sigma_max), num_inference_steps))
-            self.sigmas = np.array([sigma_min * (sigma_max / sigma_min) ** t for t in self.timesteps])
+            self.discrete_sigmas = np.exp(
+                np.linspace(np.log(sigma_min), np.log(sigma_max), num_inference_steps)
+            )
+            self.sigmas = np.array(
+                [sigma_min * (sigma_max / sigma_min) ** t for t in self.timesteps]
+            )
         elif tensor_format == "pt":
-            self.discrete_sigmas = torch.exp(torch.linspace(np.log(sigma_min), np.log(sigma_max), num_inference_steps))
-            self.sigmas = torch.tensor([sigma_min * (sigma_max / sigma_min) ** t for t in self.timesteps])
+            self.discrete_sigmas = torch.exp(
+                torch.linspace(
+                    np.log(sigma_min), np.log(sigma_max), num_inference_steps
+                )
+            )
+            self.sigmas = torch.tensor(
+                [sigma_min * (sigma_max / sigma_min) ** t for t in self.timesteps]
+            )
         else:
-            raise ValueError(f"`self.tensor_format`: {self.tensor_format} is not valid.")
+            raise ValueError(
+                f"`self.tensor_format`: {self.tensor_format} is not valid."
+            )
 
     def get_adjacent_sigma(self, timesteps, t):
         tensor_format = getattr(self, "tensor_format", "pt")
         if tensor_format == "np":
-            return np.where(timesteps == 0, np.zeros_like(t), self.discrete_sigmas[timesteps - 1])
+            return np.where(
+                timesteps == 0, np.zeros_like(t), self.discrete_sigmas[timesteps - 1]
+            )
         elif tensor_format == "pt":
             return torch.where(
                 timesteps == 0,
@@ -164,7 +188,9 @@ class ScoreSdeVeScheduler(SchedulerMixin, ConfigMixin):
         elif tensor_format == "pt":
             torch.manual_seed(seed)
         else:
-            raise ValueError(f"`self.tensor_format`: {self.tensor_format} is not valid.")
+            raise ValueError(
+                f"`self.tensor_format`: {self.tensor_format} is not valid."
+            )
 
     def step_pred(
         self,
@@ -219,9 +245,13 @@ class ScoreSdeVeScheduler(SchedulerMixin, ConfigMixin):
 
         #  equation 6: sample noise for the diffusion term of
         noise = self.randn_like(sample, generator=generator)
-        prev_sample_mean = sample - drift  # subtract because `dt` is a small negative timestep
+        prev_sample_mean = (
+            sample - drift
+        )  # subtract because `dt` is a small negative timestep
         # TODO is the variable diffusion the correct scaling term for the noise?
-        prev_sample = prev_sample_mean + diffusion[:, None, None, None] * noise  # add impact of diffusion field g
+        prev_sample = (
+            prev_sample_mean + diffusion[:, None, None, None] * noise
+        )  # add impact of diffusion field g
 
         if not return_dict:
             return (prev_sample, prev_sample_mean)
@@ -273,7 +303,9 @@ class ScoreSdeVeScheduler(SchedulerMixin, ConfigMixin):
 
         # compute corrected sample: model_output term and noise term
         prev_sample_mean = sample + step_size[:, None, None, None] * model_output
-        prev_sample = prev_sample_mean + ((step_size * 2) ** 0.5)[:, None, None, None] * noise
+        prev_sample = (
+            prev_sample_mean + ((step_size * 2) ** 0.5)[:, None, None, None] * noise
+        )
 
         if not return_dict:
             return (prev_sample,)

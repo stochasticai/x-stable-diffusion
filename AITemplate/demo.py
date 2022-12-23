@@ -25,20 +25,20 @@ from PIL import Image
 @click.option(
     "--benchmark", type=bool, default=False, help="run stable diffusion e2e benchmark"
 )
-@click.option(
-    "--batch_size", type=int, default=1, help="batch size"
-)
+@click.option("--batch_size", type=int, default=1, help="batch size")
 def run(prompt, benchmark, batch_size):
     pipe = StableDiffusionAITPipeline()
     height = 512
     width = 512
     num_inference_steps = 50
     with torch.autocast("cuda"):
-        images = pipe([prompt]*batch_size)
+        images = pipe([prompt] * batch_size)
         if benchmark:
-            t = benchmark_torch_function(10, pipe, [prompt]*batch_size,height,width,num_inference_steps)
+            t = benchmark_torch_function(
+                10, pipe, [prompt] * batch_size, height, width, num_inference_steps
+            )
             print(f"sd e2e: {t} ms")
-    
+
     images = (images * 255).round().astype("uint8")
     pil_images = [Image.fromarray(image) for image in images]
     pil_images[0].save("example_ait.png")

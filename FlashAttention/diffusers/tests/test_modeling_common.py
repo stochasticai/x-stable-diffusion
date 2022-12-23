@@ -97,7 +97,9 @@ class ModelTesterMixin:
 
         self.assertIsNotNone(output)
         expected_shape = inputs_dict["sample"].shape
-        self.assertEqual(output.shape, expected_shape, "Input and output shapes do not match")
+        self.assertEqual(
+            output.shape, expected_shape, "Input and output shapes do not match"
+        )
 
     def test_forward_with_norm_groups(self):
         init_dict, inputs_dict = self.prepare_init_args_and_inputs_for_common()
@@ -117,7 +119,9 @@ class ModelTesterMixin:
 
         self.assertIsNotNone(output)
         expected_shape = inputs_dict["sample"].shape
-        self.assertEqual(output.shape, expected_shape, "Input and output shapes do not match")
+        self.assertEqual(
+            output.shape, expected_shape, "Input and output shapes do not match"
+        )
 
     def test_forward_signature(self):
         init_dict, _ = self.prepare_init_args_and_inputs_for_common()
@@ -176,7 +180,9 @@ class ModelTesterMixin:
         if isinstance(output, dict):
             output = output.sample
 
-        noise = torch.randn((inputs_dict["sample"].shape[0],) + self.output_shape).to(torch_device)
+        noise = torch.randn((inputs_dict["sample"].shape[0],) + self.output_shape).to(
+            torch_device
+        )
         loss = torch.nn.functional.mse_loss(output, noise)
         loss.backward()
 
@@ -194,7 +200,9 @@ class ModelTesterMixin:
         if isinstance(output, dict):
             output = output.sample
 
-        noise = torch.randn((inputs_dict["sample"].shape[0],) + self.output_shape).to(torch_device)
+        noise = torch.randn((inputs_dict["sample"].shape[0],) + self.output_shape).to(
+            torch_device
+        )
         loss = torch.nn.functional.mse_loss(output, noise)
         loss.backward()
         ema_model.step(model)
@@ -211,17 +219,23 @@ class ModelTesterMixin:
 
         def recursive_check(tuple_object, dict_object):
             if isinstance(tuple_object, (List, Tuple)):
-                for tuple_iterable_value, dict_iterable_value in zip(tuple_object, dict_object.values()):
+                for tuple_iterable_value, dict_iterable_value in zip(
+                    tuple_object, dict_object.values()
+                ):
                     recursive_check(tuple_iterable_value, dict_iterable_value)
             elif isinstance(tuple_object, Dict):
-                for tuple_iterable_value, dict_iterable_value in zip(tuple_object.values(), dict_object.values()):
+                for tuple_iterable_value, dict_iterable_value in zip(
+                    tuple_object.values(), dict_object.values()
+                ):
                     recursive_check(tuple_iterable_value, dict_iterable_value)
             elif tuple_object is None:
                 return
             else:
                 self.assertTrue(
                     torch.allclose(
-                        set_nan_tensor_to_zero(tuple_object), set_nan_tensor_to_zero(dict_object), atol=1e-5
+                        set_nan_tensor_to_zero(tuple_object),
+                        set_nan_tensor_to_zero(dict_object),
+                        atol=1e-5,
                     ),
                     msg=(
                         "Tuple and dict output are not equal. Difference:"

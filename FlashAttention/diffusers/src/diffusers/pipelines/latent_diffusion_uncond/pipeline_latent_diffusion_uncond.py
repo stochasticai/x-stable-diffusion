@@ -73,7 +73,12 @@ class LDMPipeline(DiffusionPipeline):
             self.to(device)
 
         latents = torch.randn(
-            (batch_size, self.unet.in_channels, self.unet.sample_size, self.unet.sample_size),
+            (
+                batch_size,
+                self.unet.in_channels,
+                self.unet.sample_size,
+                self.unet.sample_size,
+            ),
             generator=generator,
         )
         latents = latents.to(self.device)
@@ -81,7 +86,9 @@ class LDMPipeline(DiffusionPipeline):
         self.scheduler.set_timesteps(num_inference_steps)
 
         # prepare extra kwargs for the scheduler step, since not all schedulers have the same signature
-        accepts_eta = "eta" in set(inspect.signature(self.scheduler.step).parameters.keys())
+        accepts_eta = "eta" in set(
+            inspect.signature(self.scheduler.step).parameters.keys()
+        )
 
         extra_kwargs = {}
         if accepts_eta:
@@ -91,7 +98,9 @@ class LDMPipeline(DiffusionPipeline):
             # predict the noise residual
             noise_prediction = self.unet(latents, t).sample
             # compute the previous noisy sample x_t -> x_t-1
-            latents = self.scheduler.step(noise_prediction, t, latents, **extra_kwargs).prev_sample
+            latents = self.scheduler.step(
+                noise_prediction, t, latents, **extra_kwargs
+            ).prev_sample
 
         # decode the image latents with the VAE
         image = self.vqvae.decode(latents).sample

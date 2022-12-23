@@ -64,6 +64,8 @@ For `batch_size` 1, these are the latency results:
 
 #### A100 GPU
 
+![A100_GPU_graph](./graphs/A100_GPU_latency.png)
+
 | project                | Latency (s) | GPU VRAM (GB) |
 | :--------------------- | :---------- | :------------ |
 | PyTorch           fp16 |  5.77       |  10.3         |
@@ -73,8 +75,11 @@ For `batch_size` 1, these are the latency results:
 | AITemplate        fp16 |  1.38       |  4.83         |
 | ONNX (CUDA)            |  7.26       |  13.3         |
 
+
 #### T4 GPU
 > Note: AITemplate might not support T4 GPU yet. [Check support here](https://github.com/facebookincubator/AITemplate#installation)
+
+![T4_GPU_graph](./graphs/T4_GPU_latency.png)
 
 | project                | Latency (s) |
 | :--------------------- | :---------- |
@@ -86,6 +91,8 @@ For `batch_size` 1, these are the latency results:
 ### Batched results - A100 GPU
 
 The following results were obtained by varying `batch_size` from 1 to 24.
+
+![A100_GPU_batch_size](./graphs/A100_GPU_batch.png)
 
 | project           \ bs |      1        |     4         |    8          |    16             |   24              | 
 | :--------------------- | :------------ | :------------ | :------------ | :---------------- | :---------------- |
@@ -171,11 +178,11 @@ In each folder, we will provide a Google Colab notebook with which you can test 
 ## Manual deployment
 
 Check the `README.md` of the following directories:
-- AITemplate
-- FlashAttention
-- nvFuser
-- PyTorch
-- TensorRT 
+- [AITemplate](./AITemplate/README.md)
+- [FlashAttention](./FlashAttention/README.md)
+- [nvFuser](./nvFuser/README.md)
+- [PyTorch](./PyTorch/README.md)
+- [TensorRT](./TensorRT/README.md) 
 
 ## ✅ Stochastic
 

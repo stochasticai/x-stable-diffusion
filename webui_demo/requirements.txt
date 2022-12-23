@@ -1,0 +1,5 @@
+gradio
+opencv-python
+transformers
+diffusers
+torch

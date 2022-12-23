@@ -15,8 +15,7 @@ def load_model(
     pipe = StableDiffusionPipeline.from_pretrained(
         model_name_or_path, 
         revision="fp16", 
-        torch_dtype=torch.float16,
-        use_auth_token=True
+        torch_dtype=torch.float16
     )
     
     if torch.cuda.is_available():

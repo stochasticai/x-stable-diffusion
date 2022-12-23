@@ -85,7 +85,7 @@ class TrtDiffusionModel():
                 noise_pred = noise_pred_uncond + guidance_scale * (noise_pred_text - noise_pred_uncond)
 
                 # compute the previous noisy sample x_t -> x_t-1
-                latents = self.scheduler.step(noise_pred.cuda(), i, latents)["prev_sample"]
+                latents = self.scheduler.step(noise_pred.cuda(), t, latents)["prev_sample"]
 
             # scale and decode the image latents with vae
             latents = 1 / 0.18215 * latents

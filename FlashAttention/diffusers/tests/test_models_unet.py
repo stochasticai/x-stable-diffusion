@@ -123,7 +123,9 @@ class UNetLDMModelTests(ModelTesterMixin, unittest.TestCase):
         return init_dict, inputs_dict
 
     def test_from_pretrained_hub(self):
-        model, loading_info = UNet2DModel.from_pretrained("fusing/unet-ldm-dummy-update", output_loading_info=True)
+        model, loading_info = UNet2DModel.from_pretrained(
+            "fusing/unet-ldm-dummy-update", output_loading_info=True
+        )
 
         self.assertIsNotNone(model)
         self.assertEqual(len(loading_info["missing_keys"]), 0)
@@ -193,7 +195,9 @@ class NCSNppModelTests(ModelTesterMixin, unittest.TestCase):
         num_channels = 3
 
         noise = floats_tensor((batch_size, num_channels) + sizes).to(torch_device)
-        time_step = torch.tensor(batch_size * [10]).to(dtype=torch.int32, device=torch_device)
+        time_step = torch.tensor(batch_size * [10]).to(
+            dtype=torch.int32, device=torch_device
+        )
 
         return {"sample": noise, "timestep": time_step}
 
@@ -232,7 +236,9 @@ class NCSNppModelTests(ModelTesterMixin, unittest.TestCase):
         return init_dict, inputs_dict
 
     def test_from_pretrained_hub(self):
-        model, loading_info = UNet2DModel.from_pretrained("google/ncsnpp-celebahq-256", output_loading_info=True)
+        model, loading_info = UNet2DModel.from_pretrained(
+            "google/ncsnpp-celebahq-256", output_loading_info=True
+        )
         self.assertIsNotNone(model)
         self.assertEqual(len(loading_info["missing_keys"]), 0)
 

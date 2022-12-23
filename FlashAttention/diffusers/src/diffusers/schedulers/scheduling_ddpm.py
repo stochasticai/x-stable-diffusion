@@ -98,15 +98,27 @@ class DDPMScheduler(SchedulerMixin, ConfigMixin):
         if trained_betas is not None:
             self.betas = np.asarray(trained_betas)
         elif beta_schedule == "linear":
-            self.betas = np.linspace(beta_start, beta_end, num_train_timesteps, dtype=np.float32)
+            self.betas = np.linspace(
+                beta_start, beta_end, num_train_timesteps, dtype=np.float32
+            )
         elif beta_schedule == "scaled_linear":
             # this schedule is very specific to the latent diffusion model.
-            self.betas = np.linspace(beta_start**0.5, beta_end**0.5, num_train_timesteps, dtype=np.float32) ** 2
+            self.betas = (
+                np.linspace(
+                    beta_start**0.5,
+                    beta_end**0.5,
+                    num_train_timesteps,
+                    dtype=np.float32,
+                )
+                ** 2
+            )
         elif beta_schedule == "squaredcos_cap_v2":
             # Glide cosine schedule
             self.betas = betas_for_alpha_bar(num_train_timesteps)
         else:
-            raise NotImplementedError(f"{beta_schedule} does is not implemented for {self.__class__}")
+            raise NotImplementedError(
+                f"{beta_schedule} does is not implemented for {self.__class__}"
+            )
 
         self.alphas = 1.0 - self.betas
         self.alphas_cumprod = np.cumprod(self.alphas, axis=0)
@@ -132,7 +144,9 @@ class DDPMScheduler(SchedulerMixin, ConfigMixin):
         num_inference_steps = min(self.config.num_train_timesteps, num_inference_steps)
         self.num_inference_steps = num_inference_steps
         self.timesteps = np.arange(
-            0, self.config.num_train_timesteps, self.config.num_train_timesteps // self.num_inference_steps
+            0,
+            self.config.num_train_timesteps,
+            self.config.num_train_timesteps // self.num_inference_steps,
         )[::-1].copy()
         self.set_format(tensor_format=self.tensor_format)
 
@@ -200,8 +214,13 @@ class DDPMScheduler(SchedulerMixin, ConfigMixin):
         """
         t = timestep
 
-        if model_output.shape[1] == sample.shape[1] * 2 and self.variance_type in ["learned", "learned_range"]:
-            model_output, predicted_variance = torch.split(model_output, sample.shape[1], dim=1)
+        if model_output.shape[1] == sample.shape[1] * 2 and self.variance_type in [
+            "learned",
+            "learned_range",
+        ]:
+            model_output, predicted_variance = torch.split(
+                model_output, sample.shape[1], dim=1
+            )
         else:
             predicted_variance = None
 
@@ -214,7 +233,9 @@ class DDPMScheduler(SchedulerMixin, ConfigMixin):
         # 2. compute predicted original sample from predicted noise also called
         # "predicted x_0" of formula (15) from https://arxiv.org/pdf/2006.11239.pdf
         if predict_epsilon:
-            pred_original_sample = (sample - beta_prod_t ** (0.5) * model_output) / alpha_prod_t ** (0.5)
+            pred_original_sample = (
+                sample - beta_prod_t ** (0.5) * model_output
+            ) / alpha_prod_t ** (0.5)
         else:
             pred_original_sample = model_output
 
@@ -224,18 +245,25 @@ class DDPMScheduler(SchedulerMixin, ConfigMixin):
 
         # 4. Compute coefficients for pred_original_sample x_0 and current sample x_t
         # See formula (7) from https://arxiv.org/pdf/2006.11239.pdf
-        pred_original_sample_coeff = (alpha_prod_t_prev ** (0.5) * self.betas[t]) / beta_prod_t
+        pred_original_sample_coeff = (
+            alpha_prod_t_prev ** (0.5) * self.betas[t]
+        ) / beta_prod_t
         current_sample_coeff = self.alphas[t] ** (0.5) * beta_prod_t_prev / beta_prod_t
 
         # 5. Compute predicted previous sample µ_t
         # See formula (7) from https://arxiv.org/pdf/2006.11239.pdf
-        pred_prev_sample = pred_original_sample_coeff * pred_original_sample + current_sample_coeff * sample
+        pred_prev_sample = (
+            pred_original_sample_coeff * pred_original_sample
+            + current_sample_coeff * sample
+        )
 
         # 6. Add noise
         variance = 0
         if t > 0:
             noise = self.randn_like(model_output, generator=generator)
-            variance = (self._get_variance(t, predicted_variance=predicted_variance) ** 0.5) * noise
+            variance = (
+                self._get_variance(t, predicted_variance=predicted_variance) ** 0.5
+            ) * noise
 
         pred_prev_sample = pred_prev_sample + variance
 
@@ -255,9 +283,13 @@ class DDPMScheduler(SchedulerMixin, ConfigMixin):
         sqrt_alpha_prod = self.alphas_cumprod[timesteps] ** 0.5
         sqrt_alpha_prod = self.match_shape(sqrt_alpha_prod, original_samples)
         sqrt_one_minus_alpha_prod = (1 - self.alphas_cumprod[timesteps]) ** 0.5
-        sqrt_one_minus_alpha_prod = self.match_shape(sqrt_one_minus_alpha_prod, original_samples)
+        sqrt_one_minus_alpha_prod = self.match_shape(
+            sqrt_one_minus_alpha_prod, original_samples
+        )
 
-        noisy_samples = sqrt_alpha_prod * original_samples + sqrt_one_minus_alpha_prod * noise
+        noisy_samples = (
+            sqrt_alpha_prod * original_samples + sqrt_one_minus_alpha_prod * noise
+        )
         return noisy_samples
 
     def __len__(self):

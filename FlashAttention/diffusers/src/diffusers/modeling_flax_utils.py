@@ -24,11 +24,20 @@ from flax.core.frozen_dict import FrozenDict, unfreeze
 from flax.serialization import from_bytes, to_bytes
 from flax.traverse_util import flatten_dict, unflatten_dict
 from huggingface_hub import hf_hub_download
-from huggingface_hub.utils import EntryNotFoundError, RepositoryNotFoundError, RevisionNotFoundError
+from huggingface_hub.utils import (
+    EntryNotFoundError,
+    RepositoryNotFoundError,
+    RevisionNotFoundError,
+)
 from requests import HTTPError
 
 from .modeling_utils import WEIGHTS_NAME
-from .utils import CONFIG_NAME, DIFFUSERS_CACHE, HUGGINGFACE_CO_RESOLVE_ENDPOINT, logging
+from .utils import (
+    CONFIG_NAME,
+    DIFFUSERS_CACHE,
+    HUGGINGFACE_CO_RESOLVE_ENDPOINT,
+    logging,
+)
 
 
 FLAX_WEIGHTS_NAME = "diffusion_flax_model.msgpack"
@@ -54,14 +63,18 @@ class FlaxModelMixin:
         """
         return cls(config, **kwargs)
 
-    def _cast_floating_to(self, params: Union[Dict, FrozenDict], dtype: jnp.dtype, mask: Any = None) -> Any:
+    def _cast_floating_to(
+        self, params: Union[Dict, FrozenDict], dtype: jnp.dtype, mask: Any = None
+    ) -> Any:
         """
         Helper method to cast floating-point values of given parameter `PyTree` to given `dtype`.
         """
 
         # taken from https://github.com/deepmind/jmp/blob/3a8318abc3292be38582794dbf7b094e6583b192/jmp/_src/policy.py#L27
         def conditional_cast(param):
-            if isinstance(param, jnp.ndarray) and jnp.issubdtype(param.dtype, jnp.floating):
+            if isinstance(param, jnp.ndarray) and jnp.issubdtype(
+                param.dtype, jnp.floating
+            ):
                 param = param.astype(dtype)
             return param
 
@@ -184,7 +197,9 @@ class FlaxModelMixin:
         return self._cast_floating_to(params, jnp.float16, mask)
 
     def init_weights(self, rng: jax.random.PRNGKey) -> Dict:
-        raise NotImplementedError(f"init_weights method has to be implemented for {self}")
+        raise NotImplementedError(
+            f"init_weights method has to be implemented for {self}"
+        )
 
     @classmethod
     def from_pretrained(
@@ -280,7 +295,11 @@ class FlaxModelMixin:
         from_auto_class = kwargs.pop("_from_auto", False)
         subfolder = kwargs.pop("subfolder", None)
 
-        user_agent = {"file_type": "model", "framework": "flax", "from_auto_class": from_auto_class}
+        user_agent = {
+            "file_type": "model",
+            "framework": "flax",
+            "from_auto_class": from_auto_class,
+        }
 
         # Load config if we don't provide a configuration
         config_path = config if config is not None else pretrained_model_name_or_path
@@ -301,9 +320,13 @@ class FlaxModelMixin:
 
         # Load model
         if os.path.isdir(pretrained_model_name_or_path):
-            if os.path.isfile(os.path.join(pretrained_model_name_or_path, FLAX_WEIGHTS_NAME)):
+            if os.path.isfile(
+                os.path.join(pretrained_model_name_or_path, FLAX_WEIGHTS_NAME)
+            ):
                 # Load from a Flax checkpoint
-                model_file = os.path.join(pretrained_model_name_or_path, FLAX_WEIGHTS_NAME)
+                model_file = os.path.join(
+                    pretrained_model_name_or_path, FLAX_WEIGHTS_NAME
+                )
             # At this stage we don't have a weight file so we will raise an error.
             elif os.path.join(pretrained_model_name_or_path, WEIGHTS_NAME):
                 raise EnvironmentError(
@@ -384,16 +407,22 @@ class FlaxModelMixin:
                     else:
                         raise ValueError from e
             except (UnicodeDecodeError, ValueError):
-                raise EnvironmentError(f"Unable to convert {model_file} to Flax deserializable object. ")
+                raise EnvironmentError(
+                    f"Unable to convert {model_file} to Flax deserializable object. "
+                )
         # make sure all arrays are stored as jnp.ndarray
         # NOTE: This is to prevent a bug this will be fixed in Flax >= v0.3.4:
         # https://github.com/google/flax/issues/1261
-        state = jax.tree_util.tree_map(lambda x: jax.device_put(x, jax.devices("cpu")[0]), state)
+        state = jax.tree_util.tree_map(
+            lambda x: jax.device_put(x, jax.devices("cpu")[0]), state
+        )
 
         # flatten dicts
         state = flatten_dict(state)
 
-        params_shape_tree = jax.eval_shape(model.init_weights, rng=jax.random.PRNGKey(0))
+        params_shape_tree = jax.eval_shape(
+            model.init_weights, rng=jax.random.PRNGKey(0)
+        )
         required_params = set(flatten_dict(unfreeze(params_shape_tree)).keys())
 
         shape_state = flatten_dict(unfreeze(params_shape_tree))
@@ -430,7 +459,9 @@ class FlaxModelMixin:
                 " with another architecture."
             )
         else:
-            logger.info(f"All model checkpoint weights were used when initializing {model.__class__.__name__}.\n")
+            logger.info(
+                f"All model checkpoint weights were used when initializing {model.__class__.__name__}.\n"
+            )
 
         if len(missing_keys) > 0:
             logger.warning(
@@ -505,7 +536,9 @@ class FlaxModelMixin:
                 the main process to avoid race conditions.
         """
         if os.path.isfile(save_directory):
-            logger.error(f"Provided path ({save_directory}) should be a directory, not a file")
+            logger.error(
+                f"Provided path ({save_directory}) should be a directory, not a file"
+            )
             return
 
         os.makedirs(save_directory, exist_ok=True)

@@ -65,7 +65,9 @@ class VQModelTests(ModelTesterMixin, unittest.TestCase):
         pass
 
     def test_from_pretrained_hub(self):
-        model, loading_info = VQModel.from_pretrained("fusing/vqgan-dummy", output_loading_info=True)
+        model, loading_info = VQModel.from_pretrained(
+            "fusing/vqgan-dummy", output_loading_info=True
+        )
         self.assertIsNotNone(model)
         self.assertEqual(len(loading_info["missing_keys"]), 0)
 
@@ -82,7 +84,12 @@ class VQModelTests(ModelTesterMixin, unittest.TestCase):
         if torch.cuda.is_available():
             torch.cuda.manual_seed_all(0)
 
-        image = torch.randn(1, model.config.in_channels, model.config.sample_size, model.config.sample_size)
+        image = torch.randn(
+            1,
+            model.config.in_channels,
+            model.config.sample_size,
+            model.config.sample_size,
+        )
         image = image.to(torch_device)
         with torch.no_grad():
             # Warmup pass when using mps (see #372)

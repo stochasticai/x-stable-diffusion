@@ -23,7 +23,9 @@ from diffusers.onnx_utils import OnnxRuntimeModel
 from packaging import version
 
 
-is_torch_less_than_1_11 = version.parse(version.parse(torch.__version__).base_version) < version.parse("1.11")
+is_torch_less_than_1_11 = version.parse(
+    version.parse(torch.__version__).base_version
+) < version.parse("1.11")
 
 
 def onnx_export(
@@ -94,10 +96,22 @@ def convert_models(model_path: str, output_path: str, opset: int):
     # UNET
     onnx_export(
         pipeline.unet,
-        model_args=(torch.randn(2, 4, 64, 64), torch.LongTensor([0, 1]), torch.randn(2, 77, 768), False),
+        model_args=(
+            torch.randn(2, 4, 64, 64),
+            torch.LongTensor([0, 1]),
+            torch.randn(2, 77, 768),
+            False,
+        ),
         output_path=output_path / "unet" / "model.onnx",
-        ordered_input_names=["sample", "timestep", "encoder_hidden_states", "return_dict"],
-        output_names=["out_sample"],  # has to be different from "sample" for correct tracing
+        ordered_input_names=[
+            "sample",
+            "timestep",
+            "encoder_hidden_states",
+            "return_dict",
+        ],
+        output_names=[
+            "out_sample"
+        ],  # has to be different from "sample" for correct tracing
         dynamic_axes={
             "sample": {0: "batch", 1: "channels", 2: "height", 3: "width"},
             "timestep": {0: "batch"},
@@ -110,7 +124,9 @@ def convert_models(model_path: str, output_path: str, opset: int):
     # VAE ENCODER
     vae_encoder = pipeline.vae
     # need to get the raw tensor output (sample) from the encoder
-    vae_encoder.forward = lambda sample, return_dict: vae_encoder.encode(sample, return_dict)[0].sample()
+    vae_encoder.forward = lambda sample, return_dict: vae_encoder.encode(
+        sample, return_dict
+    )[0].sample()
     onnx_export(
         vae_encoder,
         model_args=(torch.randn(1, 3, 512, 512), False),
@@ -168,7 +184,9 @@ def convert_models(model_path: str, output_path: str, opset: int):
     onnx_pipeline.save_pretrained(output_path)
     print("ONNX pipeline saved to", output_path)
 
-    _ = StableDiffusionOnnxPipeline.from_pretrained(output_path, provider="CPUExecutionProvider")
+    _ = StableDiffusionOnnxPipeline.from_pretrained(
+        output_path, provider="CPUExecutionProvider"
+    )
     print("ONNX pipeline is loadable")
 
 
@@ -182,7 +200,9 @@ if __name__ == "__main__":
         help="Path to the `diffusers` checkpoint to convert (either a local directory or on the Hub).",
     )
 
-    parser.add_argument("--output_path", type=str, required=True, help="Path to the output model.")
+    parser.add_argument(
+        "--output_path", type=str, required=True, help="Path to the output model."
+    )
 
     parser.add_argument(
         "--opset",

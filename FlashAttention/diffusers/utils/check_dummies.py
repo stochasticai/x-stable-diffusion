@@ -58,7 +58,12 @@ def find_backend(line):
 
 def read_init():
     """Read the init and extracts PyTorch, TensorFlow, SentencePiece and Tokenizers objects."""
-    with open(os.path.join(PATH_TO_DIFFUSERS, "__init__.py"), "r", encoding="utf-8", newline="\n") as f:
+    with open(
+        os.path.join(PATH_TO_DIFFUSERS, "__init__.py"),
+        "r",
+        encoding="utf-8",
+        newline="\n",
+    ) as f:
         lines = f.readlines()
 
     # Get to the point we do the actual imports for type checking
@@ -124,7 +129,9 @@ def check_dummies(overwrite=False):
     # Locate actual dummy modules and read their content.
     path = os.path.join(PATH_TO_DIFFUSERS, "utils")
     dummy_file_paths = {
-        backend: os.path.join(path, f"dummy_{short_names.get(backend, backend)}_objects.py")
+        backend: os.path.join(
+            path, f"dummy_{short_names.get(backend, backend)}_objects.py"
+        )
         for backend in dummy_files.keys()
     }
 
@@ -143,7 +150,9 @@ def check_dummies(overwrite=False):
                     f"Updating diffusers.utils.dummy_{short_names.get(backend, backend)}_objects.py as the main "
                     "__init__ has new objects."
                 )
-                with open(dummy_file_paths[backend], "w", encoding="utf-8", newline="\n") as f:
+                with open(
+                    dummy_file_paths[backend], "w", encoding="utf-8", newline="\n"
+                ) as f:
                     f.write(dummy_files[backend])
             else:
                 raise ValueError(
@@ -155,7 +164,11 @@ def check_dummies(overwrite=False):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--fix_and_overwrite", action="store_true", help="Whether to fix inconsistencies.")
+    parser.add_argument(
+        "--fix_and_overwrite",
+        action="store_true",
+        help="Whether to fix inconsistencies.",
+    )
     args = parser.parse_args()
 
     check_dummies(args.fix_and_overwrite)

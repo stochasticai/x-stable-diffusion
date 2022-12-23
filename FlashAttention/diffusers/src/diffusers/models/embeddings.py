@@ -37,7 +37,9 @@ def get_timestep_embedding(
     assert len(timesteps.shape) == 1, "Timesteps should be a 1d-array"
 
     half_dim = embedding_dim // 2
-    exponent = -math.log(max_period) * torch.arange(start=0, end=half_dim, dtype=torch.float32)
+    exponent = -math.log(max_period) * torch.arange(
+        start=0, end=half_dim, dtype=torch.float32
+    )
     exponent = exponent / (half_dim - downscale_freq_shift)
 
     emb = torch.exp(exponent).to(device=timesteps.device)
@@ -80,7 +82,9 @@ class TimestepEmbedding(nn.Module):
 
 
 class Timesteps(nn.Module):
-    def __init__(self, num_channels: int, flip_sin_to_cos: bool, downscale_freq_shift: float):
+    def __init__(
+        self, num_channels: int, flip_sin_to_cos: bool, downscale_freq_shift: float
+    ):
         super().__init__()
         self.num_channels = num_channels
         self.flip_sin_to_cos = flip_sin_to_cos
@@ -101,7 +105,9 @@ class GaussianFourierProjection(nn.Module):
 
     def __init__(self, embedding_size: int = 256, scale: float = 1.0):
         super().__init__()
-        self.weight = nn.Parameter(torch.randn(embedding_size) * scale, requires_grad=False)
+        self.weight = nn.Parameter(
+            torch.randn(embedding_size) * scale, requires_grad=False
+        )
 
         # to delete later
         self.W = nn.Parameter(torch.randn(embedding_size) * scale, requires_grad=False)

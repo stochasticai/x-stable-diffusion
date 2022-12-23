@@ -107,7 +107,8 @@ class KarrasVeScheduler(SchedulerMixin, ConfigMixin):
         self.schedule = [
             (
                 self.config.sigma_max
-                * (self.config.sigma_min**2 / self.config.sigma_max**2) ** (i / (num_inference_steps - 1))
+                * (self.config.sigma_min**2 / self.config.sigma_max**2)
+                ** (i / (num_inference_steps - 1))
             )
             for i in self.timesteps
         ]
@@ -116,7 +117,10 @@ class KarrasVeScheduler(SchedulerMixin, ConfigMixin):
         self.set_format(tensor_format=self.tensor_format)
 
     def add_noise_to_input(
-        self, sample: Union[torch.FloatTensor, np.ndarray], sigma: float, generator: Optional[torch.Generator] = None
+        self,
+        sample: Union[torch.FloatTensor, np.ndarray],
+        sigma: float,
+        generator: Optional[torch.Generator] = None,
     ) -> Tuple[Union[torch.FloatTensor, np.ndarray], float]:
         """
         Explicit Langevin-like "churn" step of adding noise to the sample according to a factor gamma_i ≥ 0 to reach a
@@ -130,7 +134,9 @@ class KarrasVeScheduler(SchedulerMixin, ConfigMixin):
             gamma = 0
 
         # sample eps ~ N(0, S_noise^2 * I)
-        eps = self.config.s_noise * torch.randn(sample.shape, generator=generator).to(sample.device)
+        eps = self.config.s_noise * torch.randn(sample.shape, generator=generator).to(
+            sample.device
+        )
         sigma_hat = sigma + gamma * sigma
         sample_hat = sample + ((sigma_hat**2 - sigma**2) ** 0.5 * eps)
 
@@ -200,7 +206,9 @@ class KarrasVeScheduler(SchedulerMixin, ConfigMixin):
         """
         pred_original_sample = sample_prev + sigma_prev * model_output
         derivative_corr = (sample_prev - pred_original_sample) / sigma_prev
-        sample_prev = sample_hat + (sigma_prev - sigma_hat) * (0.5 * derivative + 0.5 * derivative_corr)
+        sample_prev = sample_hat + (sigma_prev - sigma_hat) * (
+            0.5 * derivative + 0.5 * derivative_corr
+        )
 
         if not return_dict:
             return (sample_prev, derivative)

@@ -38,7 +38,9 @@ def get_indent(line):
     return "" if search is None else search.groups()[0]
 
 
-def split_code_in_indented_blocks(code, indent_level="", start_prompt=None, end_prompt=None):
+def split_code_in_indented_blocks(
+    code, indent_level="", start_prompt=None, end_prompt=None
+):
     """
     Split `code` into its indented blocks, starting at `indent_level`. If provided, begins splitting after
     `start_prompt` and stops at `end_prompt` (but returns what's before `start_prompt` as a first block and what's
@@ -57,9 +59,13 @@ def split_code_in_indented_blocks(code, indent_level="", start_prompt=None, end_
     # We split into blocks until we get to the `end_prompt` (or the end of the block).
     current_block = [lines[index]]
     index += 1
-    while index < len(lines) and (end_prompt is None or not lines[index].startswith(end_prompt)):
+    while index < len(lines) and (
+        end_prompt is None or not lines[index].startswith(end_prompt)
+    ):
         if len(lines[index]) > 0 and get_indent(lines[index]) == indent_level:
-            if len(current_block) > 0 and get_indent(current_block[-1]).startswith(indent_level + " "):
+            if len(current_block) > 0 and get_indent(current_block[-1]).startswith(
+                indent_level + " "
+            ):
                 current_block.append(lines[index])
                 blocks.append("\n".join(current_block))
                 if index < len(lines) - 1:
@@ -105,12 +111,18 @@ def sort_objects(objects, key=None):
     # Constants are all uppercase, they go first.
     constants = [obj for obj in objects if key(obj).isupper()]
     # Classes are not all uppercase but start with a capital, they go second.
-    classes = [obj for obj in objects if key(obj)[0].isupper() and not key(obj).isupper()]
+    classes = [
+        obj for obj in objects if key(obj)[0].isupper() and not key(obj).isupper()
+    ]
     # Functions begin with a lowercase, they go last.
     functions = [obj for obj in objects if not key(obj)[0].isupper()]
 
     key1 = ignore_underscore(key)
-    return sorted(constants, key=key1) + sorted(classes, key=key1) + sorted(functions, key=key1)
+    return (
+        sorted(constants, key=key1)
+        + sorted(classes, key=key1)
+        + sorted(functions, key=key1)
+    )
 
 
 def sort_objects_in_import(import_statement):
@@ -139,7 +151,10 @@ def sort_objects_in_import(import_statement):
 
         # We may have to ignore one or two lines on each side.
         idx = 2 if lines[1].strip() == "[" else 1
-        keys_to_sort = [(i, _re_strip_line.search(line).groups()[0]) for i, line in enumerate(lines[idx:-idx])]
+        keys_to_sort = [
+            (i, _re_strip_line.search(line).groups()[0])
+            for i, line in enumerate(lines[idx:-idx])
+        ]
         sorted_indices = sort_objects(keys_to_sort, key=lambda x: x[1])
         sorted_lines = [lines[x[0] + idx] for x in sorted_indices]
         return "\n".join(lines[:idx] + sorted_lines + lines[-idx:])
@@ -155,7 +170,9 @@ def sort_objects_in_import(import_statement):
             # We will have a final empty element if the line finished with a comma.
             if len(keys[-1]) == 0:
                 keys = keys[:-1]
-            lines[1] = get_indent(lines[1]) + ", ".join([f'"{k}"' for k in sort_objects(keys)])
+            lines[1] = get_indent(lines[1]) + ", ".join(
+                [f'"{k}"' for k in sort_objects(keys)]
+            )
         return "\n".join(lines)
     else:
         # Finally we have to deal with imports fitting on one line
@@ -186,7 +203,10 @@ def sort_imports(file, check_only=True):
 
         # Get to the start of the imports.
         line_idx = 0
-        while line_idx < len(block_lines) and "_import_structure" not in block_lines[line_idx]:
+        while (
+            line_idx < len(block_lines)
+            and "_import_structure" not in block_lines[line_idx]
+        ):
             # Skip dummy import blocks
             if "import dummy" in block_lines[line_idx]:
                 line_idx = len(block_lines)
@@ -199,11 +219,20 @@ def sort_imports(file, check_only=True):
         internal_block_code = "\n".join(block_lines[line_idx:-1])
         indent = get_indent(block_lines[1])
         # Slit the internal block into blocks of indent level 1.
-        internal_blocks = split_code_in_indented_blocks(internal_block_code, indent_level=indent)
+        internal_blocks = split_code_in_indented_blocks(
+            internal_block_code, indent_level=indent
+        )
         # We have two categories of import key: list or _import_structu[key].append/extend
-        pattern = _re_direct_key if "_import_structure" in block_lines[0] else _re_indirect_key
+        pattern = (
+            _re_direct_key
+            if "_import_structure" in block_lines[0]
+            else _re_indirect_key
+        )
         # Grab the keys, but there is a trap: some lines are empty or just comments.
-        keys = [(pattern.search(b).groups()[0] if pattern.search(b) is not None else None) for b in internal_blocks]
+        keys = [
+            (pattern.search(b).groups()[0] if pattern.search(b) is not None else None)
+            for b in internal_blocks
+        ]
         # We only sort the lines with a key.
         keys_to_sort = [(i, key) for i, key in enumerate(keys) if key is not None]
         sorted_indices = [x[0] for x in sorted(keys_to_sort, key=lambda x: x[1])]
@@ -220,7 +249,9 @@ def sort_imports(file, check_only=True):
                 count += 1
 
         # And we put our main block back together with its first and last line.
-        main_blocks[block_idx] = "\n".join(block_lines[:line_idx] + reorderded_blocks + [block_lines[-1]])
+        main_blocks[block_idx] = "\n".join(
+            block_lines[:line_idx] + reorderded_blocks + [block_lines[-1]]
+        )
 
     if code != "\n".join(main_blocks):
         if check_only:
@@ -235,7 +266,9 @@ def sort_imports_in_all_inits(check_only=True):
     failures = []
     for root, _, files in os.walk(PATH_TO_TRANSFORMERS):
         if "__init__.py" in files:
-            result = sort_imports(os.path.join(root, "__init__.py"), check_only=check_only)
+            result = sort_imports(
+                os.path.join(root, "__init__.py"), check_only=check_only
+            )
             if result:
                 failures = [os.path.join(root, "__init__.py")]
     if len(failures) > 0:
@@ -244,7 +277,9 @@ def sort_imports_in_all_inits(check_only=True):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--check_only", action="store_true", help="Whether to only check or fix style.")
+    parser.add_argument(
+        "--check_only", action="store_true", help="Whether to only check or fix style."
+    )
     args = parser.parse_args()
 
     sort_imports_in_all_inits(check_only=args.check_only)

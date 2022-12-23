@@ -52,11 +52,16 @@ class TrainingTests(unittest.TestCase):
             tensor_format="pt",
         )
 
-        assert ddpm_scheduler.config.num_train_timesteps == ddim_scheduler.config.num_train_timesteps
+        assert (
+            ddpm_scheduler.config.num_train_timesteps
+            == ddim_scheduler.config.num_train_timesteps
+        )
 
         # shared batches for DDPM and DDIM
         set_seed(0)
-        clean_images = [torch.randn((4, 3, 32, 32)).clip(-1, 1).to(device) for _ in range(4)]
+        clean_images = [
+            torch.randn((4, 3, 32, 32)).clip(-1, 1).to(device) for _ in range(4)
+        ]
         noise = [torch.randn((4, 3, 32, 32)).to(device) for _ in range(4)]
         timesteps = [torch.randint(0, 1000, (4,)).long().to(device) for _ in range(4)]
 
@@ -65,7 +70,9 @@ class TrainingTests(unittest.TestCase):
         model.train().to(device)
         for i in range(4):
             optimizer.zero_grad()
-            ddpm_noisy_images = ddpm_scheduler.add_noise(clean_images[i], noise[i], timesteps[i])
+            ddpm_noisy_images = ddpm_scheduler.add_noise(
+                clean_images[i], noise[i], timesteps[i]
+            )
             ddpm_noise_pred = model(ddpm_noisy_images, timesteps[i]).sample
             loss = torch.nn.functional.mse_loss(ddpm_noise_pred, noise[i])
             loss.backward()
@@ -77,7 +84,9 @@ class TrainingTests(unittest.TestCase):
         model.train().to(device)
         for i in range(4):
             optimizer.zero_grad()
-            ddim_noisy_images = ddim_scheduler.add_noise(clean_images[i], noise[i], timesteps[i])
+            ddim_noisy_images = ddim_scheduler.add_noise(
+                clean_images[i], noise[i], timesteps[i]
+            )
             ddim_noise_pred = model(ddim_noisy_images, timesteps[i]).sample
             loss = torch.nn.functional.mse_loss(ddim_noise_pred, noise[i])
             loss.backward()

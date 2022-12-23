@@ -101,7 +101,9 @@ class DiffusionPipeline(ConfigMixin):
             # check if the module is a pipeline module
             pipeline_dir = module.__module__.split(".")[-2]
             path = module.__module__.split(".")
-            is_pipeline_module = pipeline_dir in path and hasattr(pipelines, pipeline_dir)
+            is_pipeline_module = pipeline_dir in path and hasattr(
+                pipelines, pipeline_dir
+            )
 
             # if library is not in LOADABLE_CLASSES, then it is a custom module.
             # Or if it's a pipeline module, then the module is inside the pipeline
@@ -182,7 +184,9 @@ class DiffusionPipeline(ConfigMixin):
         return torch.device("cpu")
 
     @classmethod
-    def from_pretrained(cls, pretrained_model_name_or_path: Optional[Union[str, os.PathLike]], **kwargs):
+    def from_pretrained(
+        cls, pretrained_model_name_or_path: Optional[Union[str, os.PathLike]], **kwargs
+    ):
         r"""
         Instantiate a PyTorch diffusion pipeline from pre-trained pipeline weights.
 
@@ -310,7 +314,9 @@ class DiffusionPipeline(ConfigMixin):
         # some modules can be passed directly to the init
         # in this case they are already instantiated in `kwargs`
         # extract them here
-        expected_modules = set(inspect.signature(pipeline_class.__init__).parameters.keys())
+        expected_modules = set(
+            inspect.signature(pipeline_class.__init__).parameters.keys()
+        )
         passed_class_obj = {k: kwargs.pop(k) for k in expected_modules if k in kwargs}
 
         init_dict, _ = pipeline_class.extract_init_dict(config_dict, **kwargs)
@@ -332,14 +338,18 @@ class DiffusionPipeline(ConfigMixin):
                     library = importlib.import_module(library_name)
                     class_obj = getattr(library, class_name)
                     importable_classes = LOADABLE_CLASSES[library_name]
-                    class_candidates = {c: getattr(library, c) for c in importable_classes.keys()}
+                    class_candidates = {
+                        c: getattr(library, c) for c in importable_classes.keys()
+                    }
 
                     expected_class_obj = None
                     for class_name, class_candidate in class_candidates.items():
                         if issubclass(class_obj, class_candidate):
                             expected_class_obj = class_candidate
 
-                    if not issubclass(passed_class_obj[name].__class__, expected_class_obj):
+                    if not issubclass(
+                        passed_class_obj[name].__class__, expected_class_obj
+                    ):
                         raise ValueError(
                             f"{passed_class_obj[name]} is of type: {type(passed_class_obj[name])}, but should be"
                             f" {expected_class_obj}"
@@ -362,7 +372,9 @@ class DiffusionPipeline(ConfigMixin):
                 library = importlib.import_module(library_name)
                 class_obj = getattr(library, class_name)
                 importable_classes = LOADABLE_CLASSES[library_name]
-                class_candidates = {c: getattr(library, c) for c in importable_classes.keys()}
+                class_candidates = {
+                    c: getattr(library, c) for c in importable_classes.keys()
+                }
 
             if loaded_sub_model is None:
                 load_method_name = None
@@ -380,7 +392,9 @@ class DiffusionPipeline(ConfigMixin):
 
                 # check if the module is in a subdirectory
                 if os.path.isdir(os.path.join(cached_folder, name)):
-                    loaded_sub_model = load_method(os.path.join(cached_folder, name), **loading_kwargs)
+                    loaded_sub_model = load_method(
+                        os.path.join(cached_folder, name), **loading_kwargs
+                    )
                 else:
                     # else load from the root directory
                     loaded_sub_model = load_method(cached_folder, **loading_kwargs)

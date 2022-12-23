@@ -23,7 +23,12 @@ from difflib import get_close_matches
 from pathlib import Path
 
 from diffusers.models.auto import get_values
-from diffusers.utils import ENV_VARS_TRUE_VALUES, is_flax_available, is_tf_available, is_torch_available
+from diffusers.utils import (
+    ENV_VARS_TRUE_VALUES,
+    is_flax_available,
+    is_tf_available,
+    is_torch_available,
+)
 
 
 # All paths are set with the intent you should run this script from the root of the repo with the command
@@ -260,7 +265,10 @@ def get_model_modules():
         if not model.startswith("__"):
             model_module = getattr(diffusers.models, model)
             for submodule in dir(model_module):
-                if submodule.startswith("modeling") and submodule not in _ignore_modules:
+                if (
+                    submodule.startswith("modeling")
+                    and submodule not in _ignore_modules
+                ):
                     modeling_module = getattr(model_module, submodule)
                     if inspect.ismodule(modeling_module):
                         modules.append(modeling_module)
@@ -270,12 +278,22 @@ def get_model_modules():
 def get_models(module, include_pretrained=False):
     """Get the objects in module that are models."""
     models = []
-    model_classes = (diffusers.ModelMixin, diffusers.TFModelMixin, diffusers.FlaxModelMixin)
+    model_classes = (
+        diffusers.ModelMixin,
+        diffusers.TFModelMixin,
+        diffusers.FlaxModelMixin,
+    )
     for attr_name in dir(module):
-        if not include_pretrained and ("Pretrained" in attr_name or "PreTrained" in attr_name):
+        if not include_pretrained and (
+            "Pretrained" in attr_name or "PreTrained" in attr_name
+        ):
             continue
         attr = getattr(module, attr_name)
-        if isinstance(attr, type) and issubclass(attr, model_classes) and attr.__module__ == module.__name__:
+        if (
+            isinstance(attr, type)
+            and issubclass(attr, model_classes)
+            and attr.__module__ == module.__name__
+        ):
             models.append((attr_name, attr))
     return models
 
@@ -301,13 +319,19 @@ def check_models_are_in_init():
     dir_transformers = dir(diffusers)
     for module in get_model_modules():
         models_not_in_init += [
-            model[0] for model in get_models(module, include_pretrained=True) if model[0] not in dir_transformers
+            model[0]
+            for model in get_models(module, include_pretrained=True)
+            if model[0] not in dir_transformers
         ]
 
     # Remove private models
-    models_not_in_init = [model for model in models_not_in_init if not is_a_private_model(model)]
+    models_not_in_init = [
+        model for model in models_not_in_init if not is_a_private_model(model)
+    ]
     if len(models_not_in_init) > 0:
-        raise Exception(f"The following models should be in the main init: {','.join(models_not_in_init)}.")
+        raise Exception(
+            f"The following models should be in the main init: {','.join(models_not_in_init)}."
+        )
 
 
 # If some test_modeling files should be ignored when checking models are all tested, they should be added in the
@@ -342,7 +366,10 @@ def get_model_test_files():
             path = os.path.join(target_dir, file_or_dir)
             if os.path.isfile(path):
                 filename = os.path.split(path)[-1]
-                if "test_modeling" in filename and not os.path.splitext(filename)[0] in _ignore_files:
+                if (
+                    "test_modeling" in filename
+                    and not os.path.splitext(filename)[0] in _ignore_files
+                ):
                     file = os.path.join(*path.split(os.sep)[1:])
                     test_files.append(file)
 
@@ -354,7 +381,9 @@ def get_model_test_files():
 def find_tested_models(test_file):
     """Parse the content of test_file to detect what's in all_model_classes"""
     # This is a bit hacky but I didn't find a way to import the test_file as a module and read inside the class
-    with open(os.path.join(PATH_TO_TESTS, test_file), "r", encoding="utf-8", newline="\n") as f:
+    with open(
+        os.path.join(PATH_TO_TESTS, test_file), "r", encoding="utf-8", newline="\n"
+    ) as f:
         content = f.read()
     all_models = re.findall(r"all_model_classes\s+=\s+\(\s*\(([^\)]*)\)", content)
     # Check with one less parenthesis as well
@@ -400,9 +429,15 @@ def check_all_models_are_tested():
     test_files = get_model_test_files()
     failures = []
     for module in modules:
-        test_file = [file for file in test_files if f"test_{module.__name__.split('.')[-1]}.py" in file]
+        test_file = [
+            file
+            for file in test_files
+            if f"test_{module.__name__.split('.')[-1]}.py" in file
+        ]
         if len(test_file) == 0:
-            failures.append(f"{module.__name__} does not have its corresponding test file {test_file}.")
+            failures.append(
+                f"{module.__name__} does not have its corresponding test file {test_file}."
+            )
         elif len(test_file) > 1:
             failures.append(f"{module.__name__} has several test files: {test_file}.")
         else:
@@ -420,15 +455,29 @@ def get_all_auto_configured_models():
     if is_torch_available():
         for attr_name in dir(diffusers.models.auto.modeling_auto):
             if attr_name.startswith("MODEL_") and attr_name.endswith("MAPPING_NAMES"):
-                result = result | set(get_values(getattr(diffusers.models.auto.modeling_auto, attr_name)))
+                result = result | set(
+                    get_values(getattr(diffusers.models.auto.modeling_auto, attr_name))
+                )
     if is_tf_available():
         for attr_name in dir(diffusers.models.auto.modeling_tf_auto):
-            if attr_name.startswith("TF_MODEL_") and attr_name.endswith("MAPPING_NAMES"):
-                result = result | set(get_values(getattr(diffusers.models.auto.modeling_tf_auto, attr_name)))
+            if attr_name.startswith("TF_MODEL_") and attr_name.endswith(
+                "MAPPING_NAMES"
+            ):
+                result = result | set(
+                    get_values(
+                        getattr(diffusers.models.auto.modeling_tf_auto, attr_name)
+                    )
+                )
     if is_flax_available():
         for attr_name in dir(diffusers.models.auto.modeling_flax_auto):
-            if attr_name.startswith("FLAX_MODEL_") and attr_name.endswith("MAPPING_NAMES"):
-                result = result | set(get_values(getattr(diffusers.models.auto.modeling_flax_auto, attr_name)))
+            if attr_name.startswith("FLAX_MODEL_") and attr_name.endswith(
+                "MAPPING_NAMES"
+            ):
+                result = result | set(
+                    get_values(
+                        getattr(diffusers.models.auto.modeling_flax_auto, attr_name)
+                    )
+                )
     return [cls for cls in result]
 
 
@@ -504,7 +553,9 @@ def check_decorator_order(filename):
         search = _re_decorator.search(line)
         if search is not None:
             decorator_name = search.groups()[0]
-            if decorator_before is not None and decorator_name.startswith("parameterized"):
+            if decorator_before is not None and decorator_name.startswith(
+                "parameterized"
+            ):
                 errors.append(i)
             decorator_before = decorator_name
         elif decorator_before is not None:
@@ -534,7 +585,9 @@ def find_all_documented_objects():
     for doc_file in Path(PATH_TO_DOC).glob("**/*.rst"):
         with open(doc_file, "r", encoding="utf-8", newline="\n") as f:
             content = f.read()
-        raw_doc_objs = re.findall(r"(?:autoclass|autofunction):: transformers.(\S+)\s+", content)
+        raw_doc_objs = re.findall(
+            r"(?:autoclass|autofunction):: transformers.(\S+)\s+", content
+        )
         documented_obj += [obj.split(".")[-1] for obj in raw_doc_objs]
     for doc_file in Path(PATH_TO_DOC).glob("**/*.mdx"):
         with open(doc_file, "r", encoding="utf-8", newline="\n") as f:
@@ -661,7 +714,9 @@ def check_all_objects_are_documented():
     documented_objs = find_all_documented_objects()
     modules = diffusers._modules
     objects = [c for c in dir(diffusers) if c not in modules and not c.startswith("_")]
-    undocumented_objs = [c for c in objects if c not in documented_objs and not ignore_undocumented(c)]
+    undocumented_objs = [
+        c for c in objects if c not in documented_objs and not ignore_undocumented(c)
+    ]
     if len(undocumented_objs) > 0:
         raise Exception(
             "The following objects are in the public init so should be documented:\n - "
@@ -676,8 +731,13 @@ def check_model_type_doc_match():
     model_doc_folder = Path(PATH_TO_DOC) / "model_doc"
     model_docs = [m.stem for m in model_doc_folder.glob("*.mdx")]
 
-    model_types = list(diffusers.models.auto.configuration_auto.MODEL_NAMES_MAPPING.keys())
-    model_types = [MODEL_TYPE_TO_DOC_MAPPING[m] if m in MODEL_TYPE_TO_DOC_MAPPING else m for m in model_types]
+    model_types = list(
+        diffusers.models.auto.configuration_auto.MODEL_NAMES_MAPPING.keys()
+    )
+    model_types = [
+        MODEL_TYPE_TO_DOC_MAPPING[m] if m in MODEL_TYPE_TO_DOC_MAPPING else m
+        for m in model_types
+    ]
 
     errors = []
     for m in model_docs:

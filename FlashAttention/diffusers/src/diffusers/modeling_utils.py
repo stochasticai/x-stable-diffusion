@@ -21,10 +21,19 @@ import torch
 from torch import Tensor, device
 
 from huggingface_hub import hf_hub_download
-from huggingface_hub.utils import EntryNotFoundError, RepositoryNotFoundError, RevisionNotFoundError
+from huggingface_hub.utils import (
+    EntryNotFoundError,
+    RepositoryNotFoundError,
+    RevisionNotFoundError,
+)
 from requests import HTTPError
 
-from .utils import CONFIG_NAME, DIFFUSERS_CACHE, HUGGINGFACE_CO_RESOLVE_ENDPOINT, logging
+from .utils import (
+    CONFIG_NAME,
+    DIFFUSERS_CACHE,
+    HUGGINGFACE_CO_RESOLVE_ENDPOINT,
+    logging,
+)
 
 
 WEIGHTS_NAME = "diffusion_pytorch_model.bin"
@@ -150,7 +159,9 @@ class ModelMixin(torch.nn.Module):
                 need to replace `torch.save` by another method.
         """
         if os.path.isfile(save_directory):
-            logger.error(f"Provided path ({save_directory}) should be a directory, not a file")
+            logger.error(
+                f"Provided path ({save_directory}) should be a directory, not a file"
+            )
             return
 
         os.makedirs(save_directory, exist_ok=True)
@@ -170,16 +181,24 @@ class ModelMixin(torch.nn.Module):
             full_filename = os.path.join(save_directory, filename)
             # If we have a shard file that is not going to be replaced, we delete it, but only from the main process
             # in distributed settings to avoid race conditions.
-            if filename.startswith(WEIGHTS_NAME[:-4]) and os.path.isfile(full_filename) and is_main_process:
+            if (
+                filename.startswith(WEIGHTS_NAME[:-4])
+                and os.path.isfile(full_filename)
+                and is_main_process
+            ):
                 os.remove(full_filename)
 
         # Save the model
         save_function(state_dict, os.path.join(save_directory, WEIGHTS_NAME))
 
-        logger.info(f"Model weights saved in {os.path.join(save_directory, WEIGHTS_NAME)}")
+        logger.info(
+            f"Model weights saved in {os.path.join(save_directory, WEIGHTS_NAME)}"
+        )
 
     @classmethod
-    def from_pretrained(cls, pretrained_model_name_or_path: Optional[Union[str, os.PathLike]], **kwargs):
+    def from_pretrained(
+        cls, pretrained_model_name_or_path: Optional[Union[str, os.PathLike]], **kwargs
+    ):
         r"""
         Instantiate a pretrained pytorch model from a pre-trained model configuration.
 
@@ -264,7 +283,11 @@ class ModelMixin(torch.nn.Module):
         torch_dtype = kwargs.pop("torch_dtype", None)
         subfolder = kwargs.pop("subfolder", None)
 
-        user_agent = {"file_type": "model", "framework": "pytorch", "from_auto_class": from_auto_class}
+        user_agent = {
+            "file_type": "model",
+            "framework": "pytorch",
+            "from_auto_class": from_auto_class,
+        }
 
         # Load config if we don't provide a configuration
         config_path = pretrained_model_name_or_path
@@ -294,13 +317,17 @@ class ModelMixin(torch.nn.Module):
         # Load model
         pretrained_model_name_or_path = str(pretrained_model_name_or_path)
         if os.path.isdir(pretrained_model_name_or_path):
-            if os.path.isfile(os.path.join(pretrained_model_name_or_path, WEIGHTS_NAME)):
+            if os.path.isfile(
+                os.path.join(pretrained_model_name_or_path, WEIGHTS_NAME)
+            ):
                 # Load from a PyTorch checkpoint
                 model_file = os.path.join(pretrained_model_name_or_path, WEIGHTS_NAME)
             elif subfolder is not None and os.path.isfile(
                 os.path.join(pretrained_model_name_or_path, subfolder, WEIGHTS_NAME)
             ):
-                model_file = os.path.join(pretrained_model_name_or_path, subfolder, WEIGHTS_NAME)
+                model_file = os.path.join(
+                    pretrained_model_name_or_path, subfolder, WEIGHTS_NAME
+                )
             else:
                 raise EnvironmentError(
                     f"Error no file named {WEIGHTS_NAME} found in directory {pretrained_model_name_or_path}."
@@ -362,7 +389,13 @@ class ModelMixin(torch.nn.Module):
 
             # restore default dtype
         state_dict = load_state_dict(model_file)
-        model, missing_keys, unexpected_keys, mismatched_keys, error_msgs = cls._load_pretrained_model(
+        (
+            model,
+            missing_keys,
+            unexpected_keys,
+            mismatched_keys,
+            error_msgs,
+        ) = cls._load_pretrained_model(
             model,
             state_dict,
             model_file,
@@ -420,10 +453,15 @@ class ModelMixin(torch.nn.Module):
 
                     if (
                         model_key in model_state_dict
-                        and state_dict[checkpoint_key].shape != model_state_dict[model_key].shape
+                        and state_dict[checkpoint_key].shape
+                        != model_state_dict[model_key].shape
                     ):
                         mismatched_keys.append(
-                            (checkpoint_key, state_dict[checkpoint_key].shape, model_state_dict[model_key].shape)
+                            (
+                                checkpoint_key,
+                                state_dict[checkpoint_key].shape,
+                                model_state_dict[model_key].shape,
+                            )
                         )
                         del state_dict[checkpoint_key]
             return mismatched_keys
@@ -441,10 +479,10 @@ class ModelMixin(torch.nn.Module):
         if len(error_msgs) > 0:
             error_msg = "\n\t".join(error_msgs)
             if "size mismatch" in error_msg:
-                error_msg += (
-                    "\n\tYou may consider adding `ignore_mismatched_sizes=True` in the model `from_pretrained` method."
-                )
-            raise RuntimeError(f"Error(s) in loading state_dict for {model.__class__.__name__}:\n\t{error_msg}")
+                error_msg += "\n\tYou may consider adding `ignore_mismatched_sizes=True` in the model `from_pretrained` method."
+            raise RuntimeError(
+                f"Error(s) in loading state_dict for {model.__class__.__name__}:\n\t{error_msg}"
+            )
 
         if len(unexpected_keys) > 0:
             logger.warning(
@@ -458,7 +496,9 @@ class ModelMixin(torch.nn.Module):
                 " BertForSequenceClassification model)."
             )
         else:
-            logger.info(f"All model checkpoint weights were used when initializing {model.__class__.__name__}.\n")
+            logger.info(
+                f"All model checkpoint weights were used when initializing {model.__class__.__name__}.\n"
+            )
         if len(missing_keys) > 0:
             logger.warning(
                 f"Some weights of {model.__class__.__name__} were not initialized from the model checkpoint at"
@@ -503,7 +543,9 @@ class ModelMixin(torch.nn.Module):
         """
         return get_parameter_dtype(self)
 
-    def num_parameters(self, only_trainable: bool = False, exclude_embeddings: bool = False) -> int:
+    def num_parameters(
+        self, only_trainable: bool = False, exclude_embeddings: bool = False
+    ) -> int:
         """
         Get number of (optionally, trainable or non-embeddings) parameters in the module.
 
@@ -525,11 +567,21 @@ class ModelMixin(torch.nn.Module):
                 if isinstance(module_type, torch.nn.Embedding)
             ]
             non_embedding_parameters = [
-                parameter for name, parameter in self.named_parameters() if name not in embedding_param_names
+                parameter
+                for name, parameter in self.named_parameters()
+                if name not in embedding_param_names
             ]
-            return sum(p.numel() for p in non_embedding_parameters if p.requires_grad or not only_trainable)
+            return sum(
+                p.numel()
+                for p in non_embedding_parameters
+                if p.requires_grad or not only_trainable
+            )
         else:
-            return sum(p.numel() for p in self.parameters() if p.requires_grad or not only_trainable)
+            return sum(
+                p.numel()
+                for p in self.parameters()
+                if p.requires_grad or not only_trainable
+            )
 
 
 def unwrap_model(model: torch.nn.Module) -> torch.nn.Module:

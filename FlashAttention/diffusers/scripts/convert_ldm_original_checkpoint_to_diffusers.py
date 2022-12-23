@@ -47,7 +47,9 @@ def renew_resnet_paths(old_list, n_shave_prefix_segments=0):
         new_item = new_item.replace("emb_layers.1", "time_emb_proj")
         new_item = new_item.replace("skip_connection", "conv_shortcut")
 
-        new_item = shave_segments(new_item, n_shave_prefix_segments=n_shave_prefix_segments)
+        new_item = shave_segments(
+            new_item, n_shave_prefix_segments=n_shave_prefix_segments
+        )
 
         mapping.append({"old": old_item, "new": new_item})
 
@@ -68,7 +70,9 @@ def renew_attention_paths(old_list, n_shave_prefix_segments=0):
         new_item = new_item.replace("proj_out.weight", "proj_attn.weight")
         new_item = new_item.replace("proj_out.bias", "proj_attn.bias")
 
-        new_item = shave_segments(new_item, n_shave_prefix_segments=n_shave_prefix_segments)
+        new_item = shave_segments(
+            new_item, n_shave_prefix_segments=n_shave_prefix_segments
+        )
 
         mapping.append({"old": old_item, "new": new_item})
 
@@ -76,7 +80,12 @@ def renew_attention_paths(old_list, n_shave_prefix_segments=0):
 
 
 def assign_to_checkpoint(
-    paths, checkpoint, old_checkpoint, attention_paths_to_split=None, additional_replacements=None, config=None
+    paths,
+    checkpoint,
+    old_checkpoint,
+    attention_paths_to_split=None,
+    additional_replacements=None,
+    config=None,
 ):
     """
     This does the final conversion step: take locally converted weights and apply a global renaming
@@ -85,7 +94,9 @@ def assign_to_checkpoint(
 
     Assigns the weights to the new checkpoint.
     """
-    assert isinstance(paths, list), "Paths should be a list of dicts containing 'old' and 'new' keys."
+    assert isinstance(
+        paths, list
+    ), "Paths should be a list of dicts containing 'old' and 'new' keys."
 
     # Splits the attention layers into three variables.
     if attention_paths_to_split is not None:
@@ -97,7 +108,9 @@ def assign_to_checkpoint(
 
             num_heads = old_tensor.shape[0] // config["num_head_channels"] // 3
 
-            old_tensor = old_tensor.reshape((num_heads, 3 * channels // num_heads) + old_tensor.shape[1:])
+            old_tensor = old_tensor.reshape(
+                (num_heads, 3 * channels // num_heads) + old_tensor.shape[1:]
+            )
             query, key, value = old_tensor.split(channels // num_heads, dim=1)
 
             checkpoint[path_map["query"]] = query.reshape(target_shape)
@@ -108,7 +121,10 @@ def assign_to_checkpoint(
         new_path = path["new"]
 
         # These have already been assigned
-        if attention_paths_to_split is not None and new_path in attention_paths_to_split:
+        if (
+            attention_paths_to_split is not None
+            and new_path in attention_paths_to_split
+        ):
             continue
 
         # Global renaming happens here
@@ -147,21 +163,39 @@ def convert_ldm_checkpoint(checkpoint, config):
     new_checkpoint["conv_out.bias"] = checkpoint["out.2.bias"]
 
     # Retrieves the keys for the input blocks only
-    num_input_blocks = len({".".join(layer.split(".")[:2]) for layer in checkpoint if "input_blocks" in layer})
+    num_input_blocks = len(
+        {
+            ".".join(layer.split(".")[:2])
+            for layer in checkpoint
+            if "input_blocks" in layer
+        }
+    )
     input_blocks = {
         layer_id: [key for key in checkpoint if f"input_blocks.{layer_id}" in key]
         for layer_id in range(num_input_blocks)
     }
 
     # Retrieves the keys for the middle blocks only
-    num_middle_blocks = len({".".join(layer.split(".")[:2]) for layer in checkpoint if "middle_block" in layer})
+    num_middle_blocks = len(
+        {
+            ".".join(layer.split(".")[:2])
+            for layer in checkpoint
+            if "middle_block" in layer
+        }
+    )
     middle_blocks = {
         layer_id: [key for key in checkpoint if f"middle_block.{layer_id}" in key]
         for layer_id in range(num_middle_blocks)
     }
 
     # Retrieves the keys for the output blocks only
-    num_output_blocks = len({".".join(layer.split(".")[:2]) for layer in checkpoint if "output_blocks" in layer})
+    num_output_blocks = len(
+        {
+            ".".join(layer.split(".")[:2])
+            for layer in checkpoint
+            if "output_blocks" in layer
+        }
+    )
     output_blocks = {
         layer_id: [key for key in checkpoint if f"output_blocks.{layer_id}" in key]
         for layer_id in range(num_output_blocks)
@@ -175,18 +209,25 @@ def convert_ldm_checkpoint(checkpoint, config):
         attentions = [key for key in input_blocks[i] if f"input_blocks.{i}.1" in key]
 
         if f"input_blocks.{i}.0.op.weight" in checkpoint:
-            new_checkpoint[f"downsample_blocks.{block_id}.downsamplers.0.conv.weight"] = checkpoint[
-                f"input_blocks.{i}.0.op.weight"
-            ]
-            new_checkpoint[f"downsample_blocks.{block_id}.downsamplers.0.conv.bias"] = checkpoint[
-                f"input_blocks.{i}.0.op.bias"
-            ]
+            new_checkpoint[
+                f"downsample_blocks.{block_id}.downsamplers.0.conv.weight"
+            ] = checkpoint[f"input_blocks.{i}.0.op.weight"]
+            new_checkpoint[
+                f"downsample_blocks.{block_id}.downsamplers.0.conv.bias"
+            ] = checkpoint[f"input_blocks.{i}.0.op.bias"]
 
         paths = renew_resnet_paths(resnets)
-        meta_path = {"old": f"input_blocks.{i}.0", "new": f"downsample_blocks.{block_id}.resnets.{layer_in_block_id}"}
+        meta_path = {
+            "old": f"input_blocks.{i}.0",
+            "new": f"downsample_blocks.{block_id}.resnets.{layer_in_block_id}",
+        }
         resnet_op = {"old": "resnets.2.op", "new": "downsamplers.0.op"}
         assign_to_checkpoint(
-            paths, new_checkpoint, checkpoint, additional_replacements=[meta_path, resnet_op], config=config
+            paths,
+            new_checkpoint,
+            checkpoint,
+            additional_replacements=[meta_path, resnet_op],
+            config=config,
         )
 
         if len(attentions):
@@ -240,7 +281,11 @@ def convert_ldm_checkpoint(checkpoint, config):
         },
     }
     assign_to_checkpoint(
-        attentions_paths, new_checkpoint, checkpoint, attention_paths_to_split=to_split, config=config
+        attentions_paths,
+        new_checkpoint,
+        checkpoint,
+        attention_paths_to_split=to_split,
+        config=config,
     )
 
     for i in range(num_output_blocks):
@@ -258,22 +303,35 @@ def convert_ldm_checkpoint(checkpoint, config):
 
         if len(output_block_list) > 1:
             resnets = [key for key in output_blocks[i] if f"output_blocks.{i}.0" in key]
-            attentions = [key for key in output_blocks[i] if f"output_blocks.{i}.1" in key]
+            attentions = [
+                key for key in output_blocks[i] if f"output_blocks.{i}.1" in key
+            ]
 
             resnet_0_paths = renew_resnet_paths(resnets)
             paths = renew_resnet_paths(resnets)
 
-            meta_path = {"old": f"output_blocks.{i}.0", "new": f"up_blocks.{block_id}.resnets.{layer_in_block_id}"}
-            assign_to_checkpoint(paths, new_checkpoint, checkpoint, additional_replacements=[meta_path], config=config)
+            meta_path = {
+                "old": f"output_blocks.{i}.0",
+                "new": f"up_blocks.{block_id}.resnets.{layer_in_block_id}",
+            }
+            assign_to_checkpoint(
+                paths,
+                new_checkpoint,
+                checkpoint,
+                additional_replacements=[meta_path],
+                config=config,
+            )
 
             if ["conv.weight", "conv.bias"] in output_block_list.values():
-                index = list(output_block_list.values()).index(["conv.weight", "conv.bias"])
-                new_checkpoint[f"up_blocks.{block_id}.upsamplers.0.conv.weight"] = checkpoint[
-                    f"output_blocks.{i}.{index}.conv.weight"
-                ]
-                new_checkpoint[f"up_blocks.{block_id}.upsamplers.0.conv.bias"] = checkpoint[
-                    f"output_blocks.{i}.{index}.conv.bias"
-                ]
+                index = list(output_block_list.values()).index(
+                    ["conv.weight", "conv.bias"]
+                )
+                new_checkpoint[
+                    f"up_blocks.{block_id}.upsamplers.0.conv.weight"
+                ] = checkpoint[f"output_blocks.{i}.{index}.conv.weight"]
+                new_checkpoint[
+                    f"up_blocks.{block_id}.upsamplers.0.conv.bias"
+                ] = checkpoint[f"output_blocks.{i}.{index}.conv.bias"]
 
                 # Clear attentions as they have been attributed above.
                 if len(attentions) == 2:
@@ -302,14 +360,26 @@ def convert_ldm_checkpoint(checkpoint, config):
                     new_checkpoint,
                     checkpoint,
                     additional_replacements=[meta_path],
-                    attention_paths_to_split=to_split if any("qkv" in key for key in attentions) else None,
+                    attention_paths_to_split=to_split
+                    if any("qkv" in key for key in attentions)
+                    else None,
                     config=config,
                 )
         else:
-            resnet_0_paths = renew_resnet_paths(output_block_layers, n_shave_prefix_segments=1)
+            resnet_0_paths = renew_resnet_paths(
+                output_block_layers, n_shave_prefix_segments=1
+            )
             for path in resnet_0_paths:
                 old_path = ".".join(["output_blocks", str(i), path["old"]])
-                new_path = ".".join(["up_blocks", str(block_id), "resnets", str(layer_in_block_id), path["new"]])
+                new_path = ".".join(
+                    [
+                        "up_blocks",
+                        str(block_id),
+                        "resnets",
+                        str(layer_in_block_id),
+                        path["new"],
+                    ]
+                )
 
                 new_checkpoint[new_path] = checkpoint[old_path]
 
@@ -320,7 +390,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "--checkpoint_path", default=None, type=str, required=True, help="Path to the checkpoint to convert."
+        "--checkpoint_path",
+        default=None,
+        type=str,
+        required=True,
+        help="Path to the checkpoint to convert.",
     )
 
     parser.add_argument(
@@ -331,7 +405,13 @@ if __name__ == "__main__":
         help="The config json file corresponding to the architecture.",
     )
 
-    parser.add_argument("--dump_path", default=None, type=str, required=True, help="Path to the output model.")
+    parser.add_argument(
+        "--dump_path",
+        default=None,
+        type=str,
+        required=True,
+        help="Path to the output model.",
+    )
 
     args = parser.parse_args()
 
@@ -349,7 +429,9 @@ if __name__ == "__main__":
     model.load_state_dict(converted_checkpoint)
 
     try:
-        scheduler = DDPMScheduler.from_config("/".join(args.checkpoint_path.split("/")[:-1]))
+        scheduler = DDPMScheduler.from_config(
+            "/".join(args.checkpoint_path.split("/")[:-1])
+        )
         vqvae = VQModel.from_pretrained("/".join(args.checkpoint_path.split("/")[:-1]))
 
         pipe = LDMPipeline(unet=model, scheduler=scheduler, vae=vqvae)

@@ -77,18 +77,31 @@ class FlaxLMSDiscreteScheduler(SchedulerMixin, ConfigMixin):
         if trained_betas is not None:
             self.betas = jnp.asarray(trained_betas)
         if beta_schedule == "linear":
-            self.betas = jnp.linspace(beta_start, beta_end, num_train_timesteps, dtype=jnp.float32)
+            self.betas = jnp.linspace(
+                beta_start, beta_end, num_train_timesteps, dtype=jnp.float32
+            )
         elif beta_schedule == "scaled_linear":
             # this schedule is very specific to the latent diffusion model.
-            self.betas = jnp.linspace(beta_start**0.5, beta_end**0.5, num_train_timesteps, dtype=jnp.float32) ** 2
+            self.betas = (
+                jnp.linspace(
+                    beta_start**0.5,
+                    beta_end**0.5,
+                    num_train_timesteps,
+                    dtype=jnp.float32,
+                )
+                ** 2
+            )
         else:
-            raise NotImplementedError(f"{beta_schedule} does is not implemented for {self.__class__}")
+            raise NotImplementedError(
+                f"{beta_schedule} does is not implemented for {self.__class__}"
+            )
 
         self.alphas = 1.0 - self.betas
         self.alphas_cumprod = jnp.cumprod(self.alphas, axis=0)
 
         self.state = LMSDiscreteSchedulerState.create(
-            num_train_timesteps=num_train_timesteps, sigmas=((1 - self.alphas_cumprod) / self.alphas_cumprod) ** 0.5
+            num_train_timesteps=num_train_timesteps,
+            sigmas=((1 - self.alphas_cumprod) / self.alphas_cumprod) ** 0.5,
         )
 
     def get_lms_coefficient(self, state, order, t, current_order):
@@ -106,14 +119,20 @@ class FlaxLMSDiscreteScheduler(SchedulerMixin, ConfigMixin):
             for k in range(order):
                 if current_order == k:
                     continue
-                prod *= (tau - state.sigmas[t - k]) / (state.sigmas[t - current_order] - state.sigmas[t - k])
+                prod *= (tau - state.sigmas[t - k]) / (
+                    state.sigmas[t - current_order] - state.sigmas[t - k]
+                )
             return prod
 
-        integrated_coeff = integrate.quad(lms_derivative, state.sigmas[t], state.sigmas[t + 1], epsrel=1e-4)[0]
+        integrated_coeff = integrate.quad(
+            lms_derivative, state.sigmas[t], state.sigmas[t + 1], epsrel=1e-4
+        )[0]
 
         return integrated_coeff
 
-    def set_timesteps(self, state: LMSDiscreteSchedulerState, num_inference_steps: int) -> LMSDiscreteSchedulerState:
+    def set_timesteps(
+        self, state: LMSDiscreteSchedulerState, num_inference_steps: int
+    ) -> LMSDiscreteSchedulerState:
         """
         Sets the timesteps used for the diffusion chain. Supporting function to be run before inference.
 
@@ -123,7 +142,12 @@ class FlaxLMSDiscreteScheduler(SchedulerMixin, ConfigMixin):
             num_inference_steps (`int`):
                 the number of diffusion steps used when generating samples with a pre-trained model.
         """
-        timesteps = jnp.linspace(self.config.num_train_timesteps - 1, 0, num_inference_steps, dtype=jnp.float32)
+        timesteps = jnp.linspace(
+            self.config.num_train_timesteps - 1,
+            0,
+            num_inference_steps,
+            dtype=jnp.float32,
+        )
 
         low_idx = jnp.floor(timesteps).astype(int)
         high_idx = jnp.ceil(timesteps).astype(int)
@@ -179,11 +203,15 @@ class FlaxLMSDiscreteScheduler(SchedulerMixin, ConfigMixin):
 
         # 3. Compute linear multistep coefficients
         order = min(timestep + 1, order)
-        lms_coeffs = [self.get_lms_coefficient(state, order, timestep, curr_order) for curr_order in range(order)]
+        lms_coeffs = [
+            self.get_lms_coefficient(state, order, timestep, curr_order)
+            for curr_order in range(order)
+        ]
 
         # 4. Compute previous sample based on the derivatives path
         prev_sample = sample + sum(
-            coeff * derivative for coeff, derivative in zip(lms_coeffs, reversed(state.derivatives))
+            coeff * derivative
+            for coeff, derivative in zip(lms_coeffs, reversed(state.derivatives))
         )
 
         if not return_dict:

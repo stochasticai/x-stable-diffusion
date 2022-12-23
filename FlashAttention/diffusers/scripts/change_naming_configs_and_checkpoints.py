@@ -40,7 +40,13 @@ if __name__ == "__main__":
         help="The config json file corresponding to the architecture.",
     )
 
-    parser.add_argument("--dump_path", default=None, type=str, required=True, help="Path to the output model.")
+    parser.add_argument(
+        "--dump_path",
+        default=None,
+        type=str,
+        required=True,
+        help="Path to the output model.",
+    )
 
     args = parser.parse_args()
 
@@ -66,7 +72,9 @@ if __name__ == "__main__":
 
     subfolder = "" if has_file(args.repo_path, "config.json") else "unet"
 
-    with open(os.path.join(args.repo_path, subfolder, "config.json"), "r", encoding="utf-8") as reader:
+    with open(
+        os.path.join(args.repo_path, subfolder, "config.json"), "r", encoding="utf-8"
+    ) as reader:
         text = reader.read()
         config = json.loads(text)
 
@@ -77,7 +85,11 @@ if __name__ == "__main__":
     if has_file(args.repo_path, "config.json"):
         model = UNet2DModel(**config)
     else:
-        class_name = UNet2DConditionModel if "ldm-text2im-large-256" in args.repo_path else UNet2DModel
+        class_name = (
+            UNet2DConditionModel
+            if "ldm-text2im-large-256" in args.repo_path
+            else UNet2DModel
+        )
         model = class_name(**config)
 
     if do_only_config:
@@ -91,11 +103,17 @@ if __name__ == "__main__":
                 config[value] = config[key]
                 del config[key]
 
-        config["down_block_types"] = [k.replace("UNetRes", "") for k in config["down_block_types"]]
-        config["up_block_types"] = [k.replace("UNetRes", "") for k in config["up_block_types"]]
+        config["down_block_types"] = [
+            k.replace("UNetRes", "") for k in config["down_block_types"]
+        ]
+        config["up_block_types"] = [
+            k.replace("UNetRes", "") for k in config["up_block_types"]
+        ]
 
     if do_only_weights:
-        state_dict = torch.load(os.path.join(args.repo_path, subfolder, "diffusion_pytorch_model.bin"))
+        state_dict = torch.load(
+            os.path.join(args.repo_path, subfolder, "diffusion_pytorch_model.bin")
+        )
 
         new_state_dict = {}
         for param_key, param_value in state_dict.items():
@@ -104,7 +122,9 @@ if __name__ == "__main__":
             has_changed = False
             for key, new_key in key_parameters_to_change.items():
                 if not has_changed and param_key.split(".")[0] == key:
-                    new_state_dict[".".join([new_key] + param_key.split(".")[1:])] = param_value
+                    new_state_dict[
+                        ".".join([new_key] + param_key.split(".")[1:])
+                    ] = param_value
                     has_changed = True
             if not has_changed:
                 new_state_dict[param_key] = param_value

@@ -69,7 +69,12 @@ class UNet2DConditionModel(ModelMixin, ConfigMixin):
             "CrossAttnDownBlock2D",
             "DownBlock2D",
         ),
-        up_block_types: Tuple[str] = ("UpBlock2D", "CrossAttnUpBlock2D", "CrossAttnUpBlock2D", "CrossAttnUpBlock2D"),
+        up_block_types: Tuple[str] = (
+            "UpBlock2D",
+            "CrossAttnUpBlock2D",
+            "CrossAttnUpBlock2D",
+            "CrossAttnUpBlock2D",
+        ),
         block_out_channels: Tuple[int] = (320, 640, 1280, 1280),
         layers_per_block: int = 2,
         downsample_padding: int = 1,
@@ -86,7 +91,9 @@ class UNet2DConditionModel(ModelMixin, ConfigMixin):
         time_embed_dim = block_out_channels[0] * 4
 
         # input
-        self.conv_in = nn.Conv2d(in_channels, block_out_channels[0], kernel_size=3, padding=(1, 1))
+        self.conv_in = nn.Conv2d(
+            in_channels, block_out_channels[0], kernel_size=3, padding=(1, 1)
+        )
 
         # time
         self.time_proj = Timesteps(block_out_channels[0], flip_sin_to_cos, freq_shift)
@@ -140,7 +147,9 @@ class UNet2DConditionModel(ModelMixin, ConfigMixin):
         for i, up_block_type in enumerate(up_block_types):
             prev_output_channel = output_channel
             output_channel = reversed_block_out_channels[i]
-            input_channel = reversed_block_out_channels[min(i + 1, len(block_out_channels) - 1)]
+            input_channel = reversed_block_out_channels[
+                min(i + 1, len(block_out_channels) - 1)
+            ]
 
             is_final_block = i == len(block_out_channels) - 1
 
@@ -162,7 +171,9 @@ class UNet2DConditionModel(ModelMixin, ConfigMixin):
             prev_output_channel = output_channel
 
         # out
-        self.conv_norm_out = nn.GroupNorm(num_channels=block_out_channels[0], num_groups=norm_num_groups, eps=norm_eps)
+        self.conv_norm_out = nn.GroupNorm(
+            num_channels=block_out_channels[0], num_groups=norm_num_groups, eps=norm_eps
+        )
         self.conv_act = nn.SiLU()
         self.conv_out = nn.Conv2d(block_out_channels[0], out_channels, 3, padding=1)
 
@@ -215,7 +226,9 @@ class UNet2DConditionModel(ModelMixin, ConfigMixin):
         # 1. time
         timesteps = timestep
         if not torch.is_tensor(timesteps):
-            timesteps = torch.tensor([timesteps], dtype=torch.long, device=sample.device)
+            timesteps = torch.tensor(
+                [timesteps], dtype=torch.long, device=sample.device
+            )
         elif torch.is_tensor(timesteps) and len(timesteps.shape) == 0:
             timesteps = timesteps.to(dtype=torch.float32)
             timesteps = timesteps[None].to(device=sample.device)
@@ -232,9 +245,14 @@ class UNet2DConditionModel(ModelMixin, ConfigMixin):
         # 3. down
         down_block_res_samples = (sample,)
         for downsample_block in self.down_blocks:
-            if hasattr(downsample_block, "attentions") and downsample_block.attentions is not None:
+            if (
+                hasattr(downsample_block, "attentions")
+                and downsample_block.attentions is not None
+            ):
                 sample, res_samples = downsample_block(
-                    hidden_states=sample, temb=emb, encoder_hidden_states=encoder_hidden_states
+                    hidden_states=sample,
+                    temb=emb,
+                    encoder_hidden_states=encoder_hidden_states,
                 )
             else:
                 sample, res_samples = downsample_block(hidden_states=sample, temb=emb)
@@ -242,14 +260,21 @@ class UNet2DConditionModel(ModelMixin, ConfigMixin):
             down_block_res_samples += res_samples
 
         # 4. mid
-        sample = self.mid_block(sample, emb, encoder_hidden_states=encoder_hidden_states)
+        sample = self.mid_block(
+            sample, emb, encoder_hidden_states=encoder_hidden_states
+        )
 
         # 5. up
         for upsample_block in self.up_blocks:
             res_samples = down_block_res_samples[-len(upsample_block.resnets) :]
-            down_block_res_samples = down_block_res_samples[: -len(upsample_block.resnets)]
+            down_block_res_samples = down_block_res_samples[
+                : -len(upsample_block.resnets)
+            ]
 
-            if hasattr(upsample_block, "attentions") and upsample_block.attentions is not None:
+            if (
+                hasattr(upsample_block, "attentions")
+                and upsample_block.attentions is not None
+            ):
                 sample = upsample_block(
                     hidden_states=sample,
                     temb=emb,
@@ -257,7 +282,9 @@ class UNet2DConditionModel(ModelMixin, ConfigMixin):
                     encoder_hidden_states=encoder_hidden_states,
                 )
             else:
-                sample = upsample_block(hidden_states=sample, temb=emb, res_hidden_states_tuple=res_samples)
+                sample = upsample_block(
+                    hidden_states=sample, temb=emb, res_hidden_states_tuple=res_samples
+                )
 
         # 6. post-process
         # make sure hidden states is in float32

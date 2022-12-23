@@ -21,14 +21,12 @@ from typing import List, Optional, Union
 import torch
 from aitemplate.compiler import Model
 
-from diffusers import (
-    LMSDiscreteScheduler
-)
+from diffusers import LMSDiscreteScheduler
 from tqdm import tqdm
 from transformers import CLIPTokenizer
 
 
-class StableDiffusionAITPipeline():
+class StableDiffusionAITPipeline:
     r"""
     Pipeline for text-to-image generation using Stable Diffusion.
 
@@ -62,13 +60,12 @@ class StableDiffusionAITPipeline():
         super().__init__()
         self.scheduler = LMSDiscreteScheduler(
             beta_start=0.00085,
-            beta_end=0.012, beta_schedule="scaled_linear",
-			num_train_timesteps=1000
+            beta_end=0.012,
+            beta_schedule="scaled_linear",
+            num_train_timesteps=1000,
         )
         self.tokenizer = CLIPTokenizer.from_pretrained(
-            "CompVis/stable-diffusion-v1-4",
-            subfolder="tokenizer",
-            use_auth_token=True
+            "CompVis/stable-diffusion-v1-4", subfolder="tokenizer", use_auth_token=True
         )
         workdir = f"./tmp"
         self.clip_ait_exe = self.init_ait_module(

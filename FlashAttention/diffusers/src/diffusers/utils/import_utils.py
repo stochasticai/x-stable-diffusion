@@ -82,7 +82,9 @@ if USE_TF in ENV_VARS_TRUE_AND_AUTO_VALUES and USE_TORCH not in ENV_VARS_TRUE_VA
         _tf_available = _tf_version is not None
     if _tf_available:
         if version.parse(_tf_version) < version.parse("2"):
-            logger.info(f"TensorFlow found but with version {_tf_version}. Diffusers requires version 2 minimum.")
+            logger.info(
+                f"TensorFlow found but with version {_tf_version}. Diffusers requires version 2 minimum."
+            )
             _tf_available = False
         else:
             logger.info(f"TensorFlow version {_tf_version} available.")
@@ -92,12 +94,17 @@ else:
 
 
 if USE_JAX in ENV_VARS_TRUE_AND_AUTO_VALUES:
-    _flax_available = importlib.util.find_spec("jax") is not None and importlib.util.find_spec("flax") is not None
+    _flax_available = (
+        importlib.util.find_spec("jax") is not None
+        and importlib.util.find_spec("flax") is not None
+    )
     if _flax_available:
         try:
             _jax_version = importlib_metadata.version("jax")
             _flax_version = importlib_metadata.version("flax")
-            logger.info(f"JAX version {_jax_version}, Flax version {_flax_version} available.")
+            logger.info(
+                f"JAX version {_jax_version}, Flax version {_flax_version} available."
+            )
         except importlib_metadata.PackageNotFoundError:
             _flax_available = False
 else:
@@ -138,7 +145,12 @@ except importlib_metadata.PackageNotFoundError:
 
 _onnx_available = importlib.util.find_spec("onnxruntime") is not None
 if _onnx_available:
-    candidates = ("onnxruntime", "onnxruntime-gpu", "onnxruntime-directml", "onnxruntime-openvino")
+    candidates = (
+        "onnxruntime",
+        "onnxruntime-gpu",
+        "onnxruntime-directml",
+        "onnxruntime-openvino",
+    )
     _onnxruntime_version = None
     # For the metadata, we have to look for both onnxruntime and onnxruntime-gpu
     for pkg in candidates:
@@ -149,7 +161,9 @@ if _onnx_available:
             pass
     _onnx_available = _onnxruntime_version is not None
     if _onnx_available:
-        logger.debug(f"Successfully imported onnxruntime version {_onnxruntime_version}")
+        logger.debug(
+            f"Successfully imported onnxruntime version {_onnxruntime_version}"
+        )
 
 
 _scipy_available = importlib.util.find_spec("scipy") is not None

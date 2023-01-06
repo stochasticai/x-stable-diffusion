@@ -1,6 +1,3 @@
-<img src="https://discordapp.com/api/guilds/973926172188622908/widget.png?style=shield" alt="Discord Shield"/>
-
-
 <p align="center">
   <img src=".github/stochastic_logo_light.svg#gh-light-mode-only" width="250" alt="Stochastic.ai"/>
   <img src=".github/stochastic_logo_dark.svg#gh-dark-mode-only" width="250" alt="Stochastic.ai"/>

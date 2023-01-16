@@ -1,23 +1,43 @@
 <p align="center">
-  <img src=".github/stochastic_logo_light.svg#gh-light-mode-only" width="600" alt="Stochastic.ai"/>
-  <img src=".github/stochastic_logo_dark.svg#gh-dark-mode-only" width="600" alt="Stochastic.ai"/>
+  <img src=".github/stochastic_logo_light.svg#gh-light-mode-only" width="250" alt="Stochastic.ai"/>
+  <img src=".github/stochastic_logo_dark.svg#gh-dark-mode-only" width="250" alt="Stochastic.ai"/>
 </p>
 
 <br>
 
-# ⚡️ Real-time inference for Stable Diffusion
+<!-- # ⚡️ Real-time inference for Stable Diffusion -->
 <!-- ![stochasticai_demo](.github/stochasticai_demo.gif) -->
 
-<p align="center">
+<!-- <p align="center">
  <img src=".github/stochasticai_demo.gif" width="600" alt="Stochastic.ai Demo"/>
+</p> -->
+
+Welcome to `x-stable-diffusion` by Stochastic!
+
+This project is a compilation of acceleration techniques for the Stable Diffusion model to help you generate images faster and more efficiently, saving you both time and money.
+
+With example images and a comprehensive benchmark, you can easily choose the best technique for your needs. When you're ready to deploy, our CLI called `stochasticx` makes it easy to get started on your local machine. Try `x-stable-diffusion` and see the difference it can make for your image generation performance and cost savings.
+
+## ✅ Stochastic
+
+Stochastic was founded with a vision to make deep learning optimization and deployment effortless. With our cloud platform, you can easily optimize and deploy your deep learning models with confidence, knowing that you are getting the best performance possible. Our platform automatically optimizes your models, benchmarking them on various evaluation metrics to ensure they are running at their peak.
+
+And when it comes time to deploy, Stochastic has you covered with auto-scaling accelerated inference for models like BLOOM 176B, Stable Diffusion, and GPT-J. Plus, our platform is cloud agnostic, supporting AWS, GCP, Azure, and Kubernetes clusters
+
+<p align="center">
+ <img src=".github/stochastic_x_dashboard.jpeg" width="600" alt="Stochastic X Dashboard"/>
 </p>
 
-Stochastic provides this repository to perform fast real-time inference with `Stable Diffusion`. The goal of this repo is to collect and document as many optimization techniques for Stable Diffusion as possible. 
-
-Currently this repository includes 4 optimization techiques with more in the pipeline. Feel free to open a PR to submit a new optimization technique to the folder.
+For fully-managed solution hosted on Stochastic [Sign up →](https://www.stochastic.ai/signup)
+</br >
+For private hosting on your cloud or on-prem [Contact us →](https://stochastic.ai/contact)
 
 <!-- TOC -->
-Table of contents:
+<!-- Table of contents:
+- [Installation](#-installation)
+    - [Quickstart](#quickstart)
+    - [How to get less than 1s latency?](#how-to-get-less-than-1s-latency)
+    - [Manual](#manual-deployment)
 - [Optimizations](#-optimizations)
 - [Benchmarks](#benchmarks)
   - [Setup](#setup)
@@ -26,15 +46,80 @@ Table of contents:
       - [T4 GPU](#t4-gpu)
   - [Batched results](#batched-results)
   - [Sample images generated](#sample-images-generated)
-- [Deploy](#deployment)
-    - [Quickstart](#-quickstart)
-    - [How to get less than 1s latency?](#how-to-get-less-than-1s-latency)
-    - [Manual](#manual)
 - [Colab Notebooks](#how-to-run-with-google-colab)
-- [Stochastic](#-stochastic)
-    - [Features](#features)
-- [Reference](#reference)
+- [References](#references) -->
 <!-- /TOC -->
+
+## 🚀 Installation
+
+### Quickstart
+
+Make sure you have [Python](https://www.python.org/downloads/) and [Docker](https://docs.docker.com/engine/install/) installed on your system
+
+1. Install the latest version of `stochasticx` library.
+```
+pip install stochasticx
+```
+
+2. Deploy the Stable Diffusion model
+```
+stochasticx stable-diffusion deploy --type aitemplate
+```
+
+If you don't have a Stochastic account, then the CLI will prompt you to quickly create one. It is free and just takes 1 minute [Sign up →](https://app.stochastic.ai/signup)
+
+> Alternatively, you can deploy stable diffusion without our CLI by checking the steps [here](#manual-deployment).
+
+
+3. To perform inference with this deployed model:
+```
+stochasticx stable-diffusion inference --prompt "Riding a horse"
+```
+ Check all the options of the `inference` command:
+```
+stochasticx stable-diffusion inference --help
+```
+
+
+4. You can get the logs of the deployment executing the following command:
+```
+stochasticx stable-diffusion logs
+```
+
+5. Stop and remove the deployment with this command:
+```
+stochasticx stable-diffusion stop
+```
+
+### How to get less than 1s latency?
+
+Change the `num_inference_steps` to `30`. With this, you can get an image generated in 0.88 seconds. 
+
+```javascript
+{
+  'max_seq_length': 64,
+  'num_inference_steps': 30, 
+  'image_size': (512, 512) 
+}
+```
+
+You can also experiment with reducing the `image_size`.
+
+## How to run on Google Colab?
+
+- [Try PyTorch - FP16 in Colab ->](https://colab.research.google.com/drive/1m3n2n5bfNpRgWJ8K-xwTvhzrTQETWduq?usp=sharing)
+- [Try TensorRT in Colab ->](https://colab.research.google.com/drive/1WQ98YBHTG355vL5wKbmNj9xeBmHRZGJb?usp=sharing)
+
+In each folder, we will provide a Google Colab notebook with which you can test the full flow and inference on a T4 GPU
+
+### Manual deployment
+
+Check the `README.md` of the following directories:
+- [AITemplate](./AITemplate/README.md)
+- [FlashAttention](./FlashAttention/README.md)
+- [nvFuser](./nvFuser/README.md)
+- [PyTorch](./PyTorch/README.md)
+- [TensorRT](./TensorRT/README.md) 
 
 ## 🔥 Optimizations
 
@@ -42,6 +127,8 @@ Table of contents:
 - TensorRT: [NVIDIA TensorRT framework](https://github.com/NVIDIA/TensorRT)
 - nvFuser: [nvFuser with Pytorch](https://pytorch.org/blog/introducing-nvfuser-a-deep-learning-compiler-for-pytorch/)
 - FlashAttention: [FlashAttention intergration in Xformers](https://github.com/facebookresearch/xformers)
+
+
 
 ## Benchmarks
 
@@ -115,88 +202,6 @@ The following results were obtained by varying `batch_size` from 1 to 24.
 | FlashAttention    fp16 |  ![FlashAttention_stable-diffusion_mario](./generated_images/FlashAttention/0.png)      |  ![FlashAttention_stable-diffusion_bunny](./generated_images/FlashAttention/1.png)         | ![FlashAttention_stable-diffusion_bunny](./generated_images/FlashAttention/9.png) |
 | TensorRT          fp16 |  ![TensorRT_stable-diffusion_mario](./generated_images/TensorRT/0.png)      |  ![TensorRT_stable-diffusion_bunny](./generated_images/TensorRT/1.png)         | ![TensorRT_stable-diffusion_bunny](./generated_images/TensorRT/9.png) |
 | AITemplate        fp16 |  ![AITemplate_stable-diffusion_mario](./generated_images/AITemplate/0.png)      |  ![AITemplate_stable-diffusion_bunny](./generated_images/AITemplate/1.png)         | ![AITemplate_stable-diffusion_bunny](./generated_images/AITemplate/9.png) |
-## 🚀 Quickstart
-
-Make sure you have [Python](https://www.python.org/downloads/) and [Docker](https://docs.docker.com/engine/install/) installed on your system
-
-1. Install the latest version of `stochasticx` library.
-```
-pip install stochasticx
-```
-
-2. Deploy the Stable Diffusion model
-```
-stochasticx stable-diffusion deploy --type aitemplate
-```
-
-If you don't have a Stochastic account, then the CLI will prompt you to quickly create one. It is free and just takes 1 minute [Sign up →](https://app.stochastic.ai/signup)
-
-> Alternatively, you can deploy stable diffusion without our CLI by checking the steps [here](#manual-deployment).
-
-
-3. To perform inference with this deployed model:
-```
-stochasticx stable-diffusion inference --prompt "Riding a horse"
-```
- Check all the options of the `inference` command:
-```
-stochasticx stable-diffusion inference --help
-```
-
-
-4. You can get the logs of the deployment executing the following command:
-```
-stochasticx stable-diffusion logs
-```
-
-5. Stop and remove the deployment with this command:
-```
-stochasticx stable-diffusion stop
-```
-
-## How to get less than 1s latency?
-
-Change the `num_inference_steps` to `30`. With this, you can get an image generated in 0.88 seconds. 
-
-```javascript
-{
-  'max_seq_length': 64,
-  'num_inference_steps': 30, 
-  'image_size': (512, 512) 
-}
-```
-
-You can also experiment with reducing the `image_size`.
-
-## How to run on Google Colab?
-
-- [Try PyTorch - FP16 in Colab ->](https://colab.research.google.com/drive/1m3n2n5bfNpRgWJ8K-xwTvhzrTQETWduq?usp=sharing)
-- [Try TensorRT in Colab ->](https://colab.research.google.com/drive/1WQ98YBHTG355vL5wKbmNj9xeBmHRZGJb?usp=sharing)
-
-In each folder, we will provide a Google Colab notebook with which you can test the full flow and inference on a T4 GPU
-
-## Manual deployment
-
-Check the `README.md` of the following directories:
-- [AITemplate](./AITemplate/README.md)
-- [FlashAttention](./FlashAttention/README.md)
-- [nvFuser](./nvFuser/README.md)
-- [PyTorch](./PyTorch/README.md)
-- [TensorRT](./TensorRT/README.md) 
-
-## ✅ Stochastic
-
-Stochastic was founded with a vision to make deep learning optimization and deployment effortless. We make it easy to ship state-of-the-art AI models with production-grade performance.
-
-### Stochastic X: AI Acceleration Platform
-- Auto-optimization of deep learning models
-- Benchmarking of models and hardware on different evaluation metrics
-- Auto-scaling accelerated inference for models like BLOOM 176B, Stable Diffusion, GPT-J
-- Support for AWS, GCP, Azure clouds and Kubernetes clusters
-
-For fully-managed solution hosted on Stochastic Cloud [Sign up →](https://www.stochastic.ai/)
-For private hosting on your cloud or on-prem [Contact us →](https://stochastic.ai/contact)
-
 
 ## References
 
@@ -210,4 +215,6 @@ x-stable-diffusion is a community-driven project with several AI systems enginee
 
 It is currently maintained by: [Toan Do](https://github.com/Toan-Do), [Marcos Rivera](https://github.com/MarcosRiveraMartinez), [Sarthak Langde](https://github.com/sarthaklangde), [Subhash GN](https://github.com/subhash-stc), [Riccardo Romagnoli](https://github.com/RiccardoRomagnoli), [Roman Ageev](https://github.com/StochasticRomanAgeev) and [Glenn Ko](https://github.com/glennko)
 
+## 🌎 Join our community
 
+- Discord - https://discord.gg/TgHXuSJEk6

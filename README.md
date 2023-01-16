@@ -28,7 +28,7 @@ And when it comes time to deploy, Stochastic has you covered with auto-scaling a
  <img src=".github/stochastic_x_dashboard.jpeg" width="600" alt="Stochastic X Dashboard"/>
 </p>
 
-For fully-managed solution hosted on Stochastic [Sign up →](https://www.stochastic.ai/)
+For fully-managed solution hosted on Stochastic [Sign up →](https://www.stochastic.ai/signup)
 </br >
 For private hosting on your cloud or on-prem [Contact us →](https://stochastic.ai/contact)
 

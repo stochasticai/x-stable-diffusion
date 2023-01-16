@@ -32,6 +32,7 @@ And when it comes time to deploy, Stochastic has you covered with auto-scaling a
 </p>
 
 For fully-managed solution hosted on Stochastic [Sign up →](https://www.stochastic.ai/)
+</br >
 For private hosting on your cloud or on-prem [Contact us →](https://stochastic.ai/contact)
 
 <!-- TOC -->

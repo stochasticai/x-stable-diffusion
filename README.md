@@ -18,20 +18,6 @@ This project is a compilation of acceleration techniques for the Stable Diffusio
 
 With example images and a comprehensive benchmark, you can easily choose the best technique for your needs. When you're ready to deploy, our CLI called `stochasticx` makes it easy to get started on your local machine. Try `x-stable-diffusion` and see the difference it can make for your image generation performance and cost savings.
 
-## ✅ Stochastic
-
-Stochastic was founded with a vision to make deep learning optimization and deployment effortless. With our cloud platform, you can easily optimize and deploy your deep learning models with confidence, knowing that you are getting the best performance possible. Our platform automatically optimizes your models, benchmarking them on various evaluation metrics to ensure they are running at their peak.
-
-And when it comes time to deploy, Stochastic has you covered with auto-scaling accelerated inference for models like BLOOM 176B, Stable Diffusion, and GPT-J. Plus, our platform is cloud agnostic, supporting AWS, GCP, Azure, and Kubernetes clusters
-
-<p align="center">
- <img src=".github/stochastic_x_dashboard.jpeg" width="600" alt="Stochastic X Dashboard"/>
-</p>
-
-For fully-managed solution hosted on Stochastic [Sign up →](https://app.stochastic.ai/signup)
-</br >
-For private hosting on your cloud or on-prem [Contact us →](https://stochastic.ai/contact)
-
 <!-- TOC -->
 <!-- Table of contents:
 - [Installation](#-installation)
@@ -208,13 +194,27 @@ The following results were obtained by varying `batch_size` from 1 to 24.
 - [HuggingFace Diffusers](https://github.com/huggingface/diffusers)
 - [AITemplate](https://github.com/facebookincubator/AITemplate)
 
-
-## Team and contributors
-
-x-stable-diffusion is a community-driven project with several AI systems engineers and researchers contributing to it. 
-
-It is currently maintained by: [Toan Do](https://github.com/Toan-Do), [Marcos Rivera](https://github.com/MarcosRiveraMartinez), [Sarthak Langde](https://github.com/sarthaklangde), [Subhash GN](https://github.com/subhash-stc), [Riccardo Romagnoli](https://github.com/RiccardoRomagnoli), [Roman Ageev](https://github.com/StochasticRomanAgeev) and [Glenn Ko](https://github.com/glennko)
-
 ## 🌎 Join our community
 
 - Discord - https://discord.gg/TgHXuSJEk6
+
+## Team and contributors
+
+`x-stable-diffusion` is a community-driven project with several AI systems engineers and researchers contributing to it. 
+
+It is currently maintained by: [Toan Do](https://github.com/Toan-Do), [Marcos Rivera](https://github.com/MarcosRiveraMartinez), [Sarthak Langde](https://github.com/sarthaklangde), [Subhash GN](https://github.com/subhash-stc), [Riccardo Romagnoli](https://github.com/RiccardoRomagnoli), [Roman Ageev](https://github.com/StochasticRomanAgeev) and [Glenn Ko](https://github.com/glennko)
+
+
+## ✅ Stochastic
+
+Stochastic was founded with a vision to make deep learning optimization and deployment effortless. With our cloud platform, you can easily optimize and deploy your deep learning models with confidence, knowing that you are getting the best performance possible. Our platform automatically optimizes your models, benchmarking them on various evaluation metrics to ensure they are running at their peak.
+
+And when it comes time to deploy, Stochastic has you covered with auto-scaling accelerated inference for models like BLOOM 176B, Stable Diffusion, and GPT-J. Plus, our platform is cloud agnostic, supporting AWS, GCP, Azure, and Kubernetes clusters
+
+<p align="center">
+ <img src=".github/stochastic_x_dashboard.jpeg" width="600" alt="Stochastic X Dashboard"/>
+</p>
+
+For fully-managed solution hosted on Stochastic [Sign up →](https://app.stochastic.ai/signup)
+</br >
+For private hosting on your cloud or on-prem [Contact us →](https://stochastic.ai/contact)

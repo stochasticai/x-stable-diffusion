@@ -52,7 +52,7 @@ pip install stochasticx
 stochasticx stable-diffusion deploy --type aitemplate
 ```
 
-If you don't have a Stochastic account, then the CLI will prompt you to quickly create one. It is free and just takes 1 minute [Sign up →](https://app.stochastic.ai/signup)
+<!-- If you don't have a Stochastic account, then the CLI will prompt you to quickly create one. It is free and just takes 1 minute [Sign up →](https://app.stochastic.ai/signup) -->
 
 > Alternatively, you can deploy stable diffusion without our CLI by checking the steps [here](#manual-deployment).
 
@@ -215,6 +215,6 @@ And when it comes time to deploy, Stochastic has you covered with auto-scaling a
  <img src=".github/stochastic_x_dashboard.jpeg" width="600" alt="Stochastic X Dashboard"/>
 </p>
 
-For fully-managed solution hosted on Stochastic [Sign up →](https://app.stochastic.ai/signup)
+<!-- For fully-managed solution hosted on Stochastic [Sign up →](https://app.stochastic.ai/signup) -->
 </br >
 For private hosting on your cloud or on-prem [Contact us →](https://stochastic.ai/contact)

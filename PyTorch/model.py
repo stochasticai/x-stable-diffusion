@@ -5,7 +5,7 @@ import time
 
 
 def load_model(
-    model_name_or_path="CompVis/stable-diffusion-v1-4",
+    model_name_or_path="stabilityai/stable-diffusion-2-1",
 ) -> StableDiffusionPipeline:
     """Load model
 
@@ -14,9 +14,9 @@ def load_model(
     """
     pipe = StableDiffusionPipeline.from_pretrained(
         model_name_or_path,
-        revision="fp16",
+        # revision="fp16",
         torch_dtype=torch.float16,
-        use_auth_token=True,
+        # use_auth_token=True,
     )
     pipe = pipe.to("cuda")
 

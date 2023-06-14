@@ -29,7 +29,7 @@ docker build --build-arg model_dir_path=/path/to/stable_diffusion/model -f Docke
 ```
 
 2. Execute the Docker Container
-```
+```bash
 sudo docker run --gpus all -p 5000:5000 stable_diffusion_img
 ```
 
@@ -43,7 +43,7 @@ uvicorn server:app --host 0.0.0.0 --port 5000
 ## 3. Demo App
 
 To generate images as a command line tool, execute the following command:
-```
+```bash
 python demo.py --prompt "an astronaut riding a horse"
 ```
 

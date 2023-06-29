@@ -198,14 +198,17 @@ The following results were obtained by varying `batch_size` from 1 to 24.
 
 - Discord - https://discord.gg/TgHXuSJEk6
 
-## Team and contributors
+## 🌎 Contributing
+As an open source project in a rapidly evolving field, we welcome contributions of all kinds, including new features and better documentation. Please read our [contributing guide](CONTRIBUTING.md) to learn how you can get involved.
+
+<!-- ## Team and contributors
 
 `x-stable-diffusion` is a community-driven project with several AI systems engineers and researchers contributing to it. 
 
-It is currently maintained by: [Toan Do](https://github.com/Toan-Do), [Marcos Rivera](https://github.com/MarcosRiveraMartinez), [Sarthak Langde](https://github.com/sarthaklangde), [Subhash GN](https://github.com/subhash-stc), [Riccardo Romagnoli](https://github.com/RiccardoRomagnoli), [Roman Ageev](https://github.com/StochasticRomanAgeev) and [Glenn Ko](https://github.com/glennko)
+It is currently maintained by: [Toan Do](https://github.com/Toan-Do), [Marcos Rivera](https://github.com/MarcosRiveraMartinez), [Sarthak Langde](https://github.com/sarthaklangde), [Subhash GN](https://github.com/subhash-stc), [Riccardo Romagnoli](https://github.com/RiccardoRomagnoli), [Roman Ageev](https://github.com/StochasticRomanAgeev) and [Glenn Ko](https://github.com/glennko) -->
 
 
-## ✅ Stochastic
+<!-- ## ✅ Stochastic
 
 Stochastic was founded with a vision to make deep learning optimization and deployment effortless. With our cloud platform, you can easily optimize and deploy your deep learning models with confidence, knowing that you are getting the best performance possible. Our platform automatically optimizes your models, benchmarking them on various evaluation metrics to ensure they are running at their peak.
 
@@ -213,8 +216,8 @@ And when it comes time to deploy, Stochastic has you covered with auto-scaling a
 
 <p align="center">
  <img src=".github/stochastic_x_dashboard.jpeg" width="600" alt="Stochastic X Dashboard"/>
-</p>
+</p> -->
 
 For fully-managed solution hosted on Stochastic [Sign up →](https://app.stochastic.ai/signup)
 </br >
-For private hosting on your cloud or on-prem [Contact us →](https://stochastic.ai/contact)
+For managed hosting on our cloud or on your private cloud [Contact us →](https://stochastic.ai/contact)

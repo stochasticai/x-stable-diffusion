@@ -1,4 +1,4 @@
 transformers==4.21.2
 diffusers==0.3.0
-torch==1.12.1+cu116
+torch==1.13.1
 scipy

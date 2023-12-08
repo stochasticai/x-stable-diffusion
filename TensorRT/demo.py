@@ -110,7 +110,7 @@ class TrtDiffusionModel:
                 )
 
                 # compute the previous noisy sample x_t -> x_t-1
-                latents = self.scheduler.step(noise_pred.cuda(), t, latents)[
+                latents = self.scheduler.step(noise_pred.cuda(), i, latents)[
                     "prev_sample"
                 ]
 
